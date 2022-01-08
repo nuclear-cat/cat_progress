@@ -1,0 +1,20 @@
+<div>
+    {{ form_start(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.description) }}
+
+    <div class="row">
+        <div class="col-3 col-sm-4 col-md-2 col-lg-1">
+            {{ form_row(form.totalPoints) }}
+        </div>
+    </div>
+    <div class="d-flex">
+        {% for weekdayForm in form.weekdays.children %}
+            <div class="pe-3">
+                {{ form_row(weekdayForm) }}
+            </div>
+        {% endfor %}
+    </div>
+
+    {{ form_end(form) }}
+</div>

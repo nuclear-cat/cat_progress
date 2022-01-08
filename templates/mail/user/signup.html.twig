@@ -1,0 +1,5 @@
+{% extends 'mail/base.html.twig' %}
+{% block body %}
+    <p>To confirm your account follow the link:</p>
+    <p><a href="{{ url('cabinet.register.confirm', { id : id, token: token }) }}">Confirm E-Mail</a></p>
+{% endblock %}

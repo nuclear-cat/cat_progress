@@ -1,0 +1,27 @@
+@import "~bootstrap";
+@import "~@fortawesome/fontawesome-free/css/all.css";
+
+.main-navbar-nav {
+    display: flex;
+    flex-direction: column;
+    padding-left: 26px;
+    margin-bottom: 0;
+    list-style: none;
+}
+
+.navbar-dark .main-navbar-nav .nav-link {
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.navbar-dark .main-navbar-nav .nav-link:hover, .navbar-dark .navbar-nav .nav-link:focus {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.main-navbar-nav .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+a {
+    text-decoration: none;
+}

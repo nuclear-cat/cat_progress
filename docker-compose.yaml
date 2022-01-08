@@ -1,0 +1,71 @@
+version: '3.5'
+
+services:
+  cat-progress-nginx:
+    container_name: cat-progress-nginx
+    build:
+      context: ./docker/dev/nginx
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    depends_on:
+      - cat-progress-php-fpm
+      - cat-progress-postgres
+    ports:
+      - '8081:81'
+
+  cat-progress-php-fpm:
+    container_name: cat-progress-php-fpm
+    build:
+      context: ./docker/dev/php-fpm
+      dockerfile: Dockerfile
+    depends_on:
+      - cat-progress-postgres
+      - cat-progress-mailhog
+    volumes:
+      - ./:/app
+    working_dir: /app
+
+  cat-progress-php-cli:
+    container_name: cat-progress-php-cli
+    build:
+      context: ./docker/dev/php-cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./:/app
+    working_dir: /app
+    depends_on:
+      - cat-progress-postgres
+      - cat-progress-mailhog
+
+  cat-progress-postgres:
+    container_name: cat-progress-postgres
+    image: postgres:13.3-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: app
+    volumes:
+      - cat-progress-postgres:/var/lib/postgresql/data
+    ports:
+      - '54326:5432'
+
+  cat-progress-node:
+    depends_on:
+      - cat-progress-postgres
+    container_name: cat-progress-node
+    image: node:16-alpine3.11
+    volumes:
+      - ./:/app
+    working_dir: /app
+    command: yarn watch
+
+  cat-progress-mailhog:
+      container_name: cat-progress-mailhog
+      image: mailhog/mailhog
+      ports:
+        - "8026:8025"
+volumes:
+  cat-progress-postgres:
+#  keycloak_postgres_data:
+#    driver: local

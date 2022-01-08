@@ -1,0 +1,33 @@
+{% extends 'cabinet/main.html.twig' %}
+
+{% block title %}Overview{% endblock %}
+
+{% block content %}
+    <div class="mx-5 mt-5">
+        <h3>Today habits</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="ps-0">Title</th>
+                <th>Category</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for habit in today_habits %}
+                <tr>
+                    <td class="ps-0">
+                        {{ habit.habitTitle }}
+                    </td>
+                    <td>
+                        {{ habit.habitDescription }}
+                    </td>
+                    <td>
+                        {{ habit.categoryTitle }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

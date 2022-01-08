@@ -1,0 +1,79 @@
+{% use "bootstrap_base_layout.html.twig" %}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            {{- form_widget(child, {
+                parent_label_class: label_attr.class|default(''),
+                translation_domain: choice_translation_domain,
+                valid: valid,
+            }) -}}
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded %}
+
+{%- block widget_container_attributes -%}
+    {%- if id is not empty %}id="{{ id }}"{% endif -%}
+    {{ block('attributes') }}
+{%- endblock widget_container_attributes -%}
+
+{%- block radio_widget -%}
+    {%- set attr = attr|merge({class: (attr.class|default('') ~ ' form-check-input')|trim}) -%}
+    {%- set parent_label_class = parent_label_class|default(label_attr.class|default('')) -%}
+    {%- set row_class = 'form-check' -%}
+    {%- if 'radio-inline' in parent_label_class -%}
+        {%- set row_class = row_class ~ ' form-check-inline' -%}
+    {%- endif -%}
+    <div class="{{ row_class }}">
+        {{- form_label(form, null, { widget: parent() }) -}}
+    </div>
+{%- endblock radio_widget %}
+
+{%- block checkbox_radio_label -%}
+    {#- Do not display the label if widget is not defined in order to prevent double label rendering -#}
+    {%- if widget is defined -%}
+        {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' form-check-label')|trim}) -%}
+        {%- if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+        {%- if required -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' required')|trim}) -%}
+        {%- endif -%}
+        {%- if parent_label_class is defined -%}
+            {%- set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' ' ~ parent_label_class)|replace({'checkbox-inline': '', 'radio-inline': ''})|trim}) -%}
+        {%- endif -%}
+        {%- if label is not same as(false) and label is empty -%}
+            {%- if label_format is not empty -%}
+                {%- set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) -%}
+            {%- else -%}
+                {%- set label = name|humanize -%}
+            {%- endif -%}
+        {%- endif -%}
+
+        <label{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>
+            {{ widget|raw }}
+
+            <i style="color: #00bcf2" class="fas fa-circle fa-2x"></i>
+        </label>
+{#        <label{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}>#}
+{#            {%- if label is not same as(false) -%}#}
+{#                {%- if translation_domain is same as(false) -%}#}
+{#                    {%- if label_html is same as(false) -%}#}
+{#                        {{- label -}}#}
+{#                    {%- else -%}#}
+{#                        {{- label|raw -}}#}
+{#                    {%- endif -%}#}
+{#                {%- else -%}#}
+{#                    {%- if label_html is same as(false) -%}#}
+{#                        {{- label|trans(label_translation_parameters, translation_domain) -}}#}
+{#                    {%- else -%}#}
+{#                        {{- label|trans(label_translation_parameters, translation_domain)|raw -}}#}
+{#                    {%- endif -%}#}
+{#                {%- endif -%}#}
+{#            {%- endif -%}#}
+{#        </label>#}
+    {%- endif -%}
+{%- endblock checkbox_radio_label %}

@@ -1,0 +1,12 @@
+{% extends 'cabinet/main.html.twig' %}
+
+{% block title %}Edit category{% endblock %}
+
+{% block content %}
+    <div class="mx-5 mt-5">
+        <div>
+            <h3>Create new category</h3>
+            {% include 'cabinet/category/_form.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

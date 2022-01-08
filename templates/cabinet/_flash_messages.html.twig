@@ -1,0 +1,13 @@
+{% for flashMessage in app.session.flashbag.get('error') %}
+    <div>
+        <div role="button" data-dismiss="alert" class="alert alert-danger alert-dismissible fade show"
+             role="alert">{{ flashMessage }}</div>
+    </div>
+{% endfor %}
+
+{% for flashMessage in app.session.flashbag.get('notice') %}
+    <div>
+        <div role="button" data-dismiss="alert" class="alert alert-primary alert-dismissible fade show"
+             role="alert">{{ flashMessage }}</div>
+    </div>
+{% endfor %}

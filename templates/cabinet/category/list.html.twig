@@ -1,0 +1,53 @@
+{% extends 'cabinet/main.html.twig' %}
+
+{% block title %}Categories{% endblock %}
+
+{% block content %}
+    <div class="mx-5 mt-5">
+        <div class="d-flex justify-content-between mb-4">
+            <h3>Categories</h3>
+            <div>
+                <a class="btn btn-primary" href="{{ path('cabinet.category.create') }}">Create new category</a>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="ps-0">Color</th>
+                <th>Title</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for category in categories %}
+                <tr>
+                    <td style="width: 1%;">
+                        <i style="color: {{ category.color.value }}" class="fas fa-circle"></i>
+                    </td>
+                    <td class="ps-0">
+                        {{ category.title }}
+                    </td>
+                    <td class="pe-0" style="width: 1%">
+                        <div class="btn-group" role="group" aria-label="Basic example">
+                            <div class="btn-group" role="group">
+                                <button id="btnGroupDrop{{ category.id }}" type="button"
+                                        class="btn btn-sm dropdown-toggle"
+                                        data-bs-toggle="dropdown" aria-expanded="false"></button>
+                                <ul class="dropdown-menu" aria-labelledby="btnGroupDrop{{ category.id }}">
+                                    <li>
+                                        <a class="dropdown-item"
+                                           href="{{ path('cabinet.category.edit', { id: category.id }) }}">Edit</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="#">Delete</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

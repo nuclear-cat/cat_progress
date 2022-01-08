@@ -1,0 +1,20 @@
+{% extends 'cabinet/base.html.twig' %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="row justify-content-center align-items-center">
+            <div class="col-4">
+                <div class="mt-5 mb-5">
+                    {% block header %}{% endblock %}
+                </div>
+                <div class="card p-4">
+                    {% include 'cabinet/_flash_messages.html.twig' %}
+                    {% block content %}
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

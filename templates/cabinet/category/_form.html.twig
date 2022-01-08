@@ -1,0 +1,21 @@
+<div>
+    {#    {% form_theme form.color 'cabinet/form/color_choice_widget.html.twig' %} #}
+
+    {{ form_start(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.description) }}
+    <div class="row form-check-inline" data-controller="color-selector">
+        <div class="col-4">
+            {{ form_row(form.color, { attr: { class: 'js-color-select' }}) }}
+            <div class="mb-3 form-check-inline">
+                {% for colorChoice in form.color.vars.choices %}
+                    <button data-value="{{ colorChoice.value }}" data-action="color-selector#selectColor" type="button"
+                            class="js-select-color btn btn-sm">
+                        <i style="color: {{ colorChoice.data.value }}" class="fas fa-circle fa-2x"></i>
+                    </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {{ form_end(form) }}
+</div>

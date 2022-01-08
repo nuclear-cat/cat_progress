@@ -1,0 +1,32 @@
+doctrine:
+  dbal:
+    url: '%env(resolve:DATABASE_URL)%'
+    server_version: '13'
+    mapping_types:
+      progress_weekday: string
+      user_status: string
+    types:
+      user_email: App\Model\User\DBAL\EmailType
+      user_timezone: App\Model\User\DBAL\TimezoneType
+      user_status: App\Model\User\DBAL\StatusType
+
+      progress_weekday: App\Model\Progress\DBAL\WeekdayType
+      progress_category_color: App\Model\Progress\DBAL\CategoryColorType
+
+  orm:
+    auto_generate_proxy_classes: true
+    naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
+    auto_mapping: true
+    mappings:
+      Progress:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/Model/Progress/Entity'
+        prefix: App\Model\Progress\Entity
+        alias: Progress
+      User:
+        is_bundle: false
+        type: attribute
+        dir: '%kernel.project_dir%/src/Model/User/Entity'
+        prefix: App\Model\User\Entity
+        alias: Auth

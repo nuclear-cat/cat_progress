@@ -1,0 +1,35 @@
+parameters:
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+      - '../src/Tests/'
+
+  App\Model\Mailer:
+    $fromEmail: '%env(MAILER_FROM_EMAIL)%'
+    $fromName: '%env(MAILER_FROM_NAME)%'
+
+  App\Model\User\Service\AccessTokenManager:
+    $privateKeyPath: '%env(JWT_PRIVATE_KEY_PATH)%'
+    $publicKeyPath: '%env(JWT_PUBLIC_KEY_PATH)%'
+    $passphrase: '%env(JWT_PASSPHRASE)%'
+
+  App\Model\User\Service\RefreshTokenManager:
+    $privateKeyPath: '%env(JWT_PRIVATE_KEY_PATH)%'
+    $publicKeyPath: '%env(JWT_PUBLIC_KEY_PATH)%'
+    $passphrase: '%env(JWT_PASSPHRASE)%'
+    $encryptionKey: '%env(JWT_ENCRYPTION_KEY)%'
+
+  App\Model\Progress\EventListener\:
+    resource: '../src/Model/Progress/EventListener/*'
+    tags:
+      - { name: kernel.event_listener }
+

@@ -1,0 +1,120 @@
+{% extends 'cabinet/main.html.twig' %}
+
+{% block title %}Habits calendar{% endblock %}
+
+{% block content %}
+    <div class="container-fluid" data-controller="calendar">
+        <div class="row mt-3 overflow-scroll" data-controller="hello">
+            <div class="col-12 bg-white" id="calendarContainer">
+                <div>
+                    <div>
+                        <div class="row">
+                            {% for weekday in weekdays %}
+                                <div class="col bg-white">{{ weekday.short }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div>
+                        {% for row in calendar %}
+                            <div class="row">
+                                {% for day in row %}
+                                    <div class="js-calendar-day col bg-white border-top border-3{% if current_date == day %} border-primary {% else %} border-white{% endif %}"
+                                         style="min-height: 150px">
+                                        <div class="row bg-light">
+                                            {% if current_date == day %}
+                                                <div class="fw-bold">{{ day.format('d M') }}</div>
+                                            {% else %}
+                                                <div class="">{{ day.format('d') }}</div>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="py-2 {% if day.format('Y-m') != current_date.format('Y-m') %} text-muted opacity-50{% endif %}">
+                                            {% for habit in habits %}
+                                                {% if habit.isActual(day, timezone) %}
+                                                    <div class="d-flex">
+                                                        <div class="px-1 justify-content-around"
+                                                             style="border-radius: 8px">
+                                                            <div>
+                                                                {% for completion in habit.dayCompletions(day) %}
+                                                                    <a class="text-success js-show-habit-completion-sidebar"
+                                                                       href="{{ path('cabinet.habit.incomplete', { id: habit.id, completionId: completion.id, redirect: url('cabinet.habit.calendar') }) }}">
+                                                                        <i class="fas fa-circle"></i>
+                                                                    </a>
+                                                                {% else %}
+                                                                    <a class="text-success"
+                                                                       href="{{ path('cabinet.habit.complete', { id: habit.id, date: day.format('Y-m-d'), redirect: url('cabinet.habit.calendar') }) }}">
+                                                                        <i class="far fa-circle"></i>
+                                                                    </a>
+                                                                {% endfor %}
+
+                                                                <a class="js-show-habit-sidebar small"
+                                                                   href="{{ path('cabinet.habit.show', { id: habit.id }) }}">{{ habit.title }}</a>
+                                                            </div>
+
+                                                            <div>
+                                                                <span style="background-color: {{ habit.category.color.value }}"
+                                                                      class="badge">{{ habit.category.title }}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <div id="habitSidebar" class="col-3" style="display: none;">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Card title</h5>
+                        <button type="button" class="js-hide-calendar-sidebar btn-close" aria-label="Close"></button>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                            the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+            <div id="habitCompletionSidebar" class="col-3" style="display: none;">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Habit completion title</h5>
+                        <button type="button" class="js-hide-calendar-sidebar btn-close" aria-label="Close"></button>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of
+                            the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+
+{#            <div class="modal fade" id="habitCompletionModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">#}
+{#                <div class="modal-dialog">#}
+{#                    <div class="modal-content">#}
+{#                        <div class="modal-header">#}
+{#                            <h5 class="modal-title" id="exampleModalLabel">Habit title</h5>#}
+{#                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#                        </div>#}
+{#                        <div class="modal-body">#}
+{#                            ...#}
+{#                        </div>#}
+{#                        <div class="modal-footer">#}
+{#                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>#}
+{#                            <button type="button" class="btn btn-primary">Save changes</button>#}
+{#                            <button type="button" class="btn btn-primary">Save changes</button>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
+        </div>
+    </div>
+{% endblock %}

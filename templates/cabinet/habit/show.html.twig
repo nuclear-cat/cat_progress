@@ -1,0 +1,25 @@
+{% extends 'cabinet/main.html.twig' %}
+
+{% block title %}{{ habit.title }}{% endblock %}
+
+{% block content %}
+    <div class="mx-5">
+        <div>
+            <h3>{{ habit.title }}</h3>
+            <div>{{ habit.description }}</div>
+            <div>
+                <div class="mx-3">
+                    <div class="row">
+                        {% for weekday in weekdays %}
+                            {% if weekday in habit.weekdays %}
+                                <div class="text-white bg-primary col border">{{ weekday.short }}</div>
+                            {% else %}
+                                <div class="col border">{{ weekday.short }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
