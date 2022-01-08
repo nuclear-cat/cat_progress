@@ -1,0 +1,60 @@
+<div class="container">
+    <h3>{{ title }}</h3>
+
+    <div *ngIf="form; else loading">
+
+        <form [formGroup]="form" (ngSubmit)="submitForm()" novalidate>
+            <div>
+                <mat-form-field appearance="outline" class="full-width-field">
+                    <mat-label>Title</mat-label>
+                    <input type="text" matInput placeholder="Title" formControlName="title">
+                </mat-form-field>
+            </div>
+
+            <div>
+                <mat-form-field appearance="outline" class="full-width-field">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput
+                              cdkTextareaAutosize
+                              #autosize="cdkTextareaAutosize"
+                              cdkAutosizeMinRows="2"
+                              cdkAutosizeMaxRows="10"
+                              placeholder="Description"
+                              formControlName="description"></textarea>
+                </mat-form-field>
+            </div>
+
+            <div>
+                <mat-form-field appearance="outline" class="full-width-field">
+                    <mat-label>Points</mat-label>
+                    <input type="text" matInput placeholder="Points" formControlName="points">
+                </mat-form-field>
+            </div>
+            <mat-form-field appearance="outline" class="full-width-field">
+                <mat-label>Category</mat-label>
+                <mat-select formControlName="category">
+                    <mat-option
+                            *ngFor="let category of categoriesResponse.categories; let i = index"
+                            [value]="category.id"
+                    >{{ category.title }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <ng-container formArrayName="weekdays">
+                <div *ngFor="let weekday of weekdays; let i = index">
+                    <mat-checkbox
+                            [formControlName]="i"
+                            [value]="weekday"
+                    >{{weekday}}</mat-checkbox>
+                </div>
+            </ng-container>
+
+            <div class="button-wrapper">
+                <button mat-flat-button [disabled]="form.invalid || form.disabled"
+                        color="primary">{{ submitButtonTitle }}</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<ng-template #loading>Loading...</ng-template>

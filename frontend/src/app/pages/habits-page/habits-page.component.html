@@ -1,0 +1,44 @@
+<div class="container">
+    <div *ngIf="habitsResponse; else loading">
+        <div fxLayout="row" fxLayoutGap="1px" fxLayout.sm="column">
+            <h3 fxFlex="2 1 auto" fxLayoutAlign="start">
+                Habits ({{ habitsResponse.habits.length }})
+            </h3>
+            <div fxLayoutAlign="center center">
+                <button routerLink="/create-habit" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <mat-list>
+            <mat-list-item
+                    class="mp-list-item"
+                    *ngFor="let habit of habitsResponse.habits; last as last">
+                <div mat-line>
+                    <span>{{ habit.title }}</span>
+                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+                </div>
+
+                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
+                        aria-label="Example icon-button with a menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #menu="matMenu">
+                    <button [routerLink]="'/edit-habit/' + habit.id" mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button (click)="deleteHabit(habit.id)" mat-menu-item>
+                        <mat-icon>delete</mat-icon>
+                        <span>Delete</span>
+                    </button>
+                </mat-menu>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</div>
+
+<ng-template #loading>Loading...</ng-template>

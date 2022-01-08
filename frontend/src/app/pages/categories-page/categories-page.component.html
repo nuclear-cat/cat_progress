@@ -1,0 +1,46 @@
+<div class="container">
+    <div *ngIf="categoriesResponse; else loading">
+        <div fxLayout="row" fxLayoutGap="1px" fxLayout.sm="column">
+            <h3 fxFlex="2 1 auto" fxLayoutAlign="start">
+                Categories ({{ categoriesResponse.categories.length }})
+            </h3>
+            <div fxLayoutAlign="center center">
+                <button routerLink="/create-category" mat-icon-button>
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <mat-list>
+            <mat-list-item
+                    class="mp-list-item"
+                    *ngFor="let category of categoriesResponse.categories; last as last">
+                <div mat-line>
+                    <span>
+                        <mat-icon [style]="'color: ' + category.color">radio_button_checked</mat-icon>
+                    </span>
+                    <span>{{ category.title }}</span>
+                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+                </div>
+
+                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+
+                <mat-menu #menu="matMenu">
+                    <button [routerLink]="'/edit-category/' + category.id" mat-menu-item>
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button (click)="deleteCategory(category.id)" mat-menu-item>
+                        <mat-icon>delete</mat-icon>
+                        <span>Delete</span>
+                    </button>
+                </mat-menu>
+            </mat-list-item>
+        </mat-list>
+    </div>
+</div>
+
+<ng-template #loading>Loading...</ng-template>

@@ -1,0 +1,75 @@
+<mat-sidenav-container class="sidenav-container">
+
+  <mat-sidenav #drawer class="sidenav" fixedInViewport
+               [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+               [mode]="(isHandset$ | async) ? 'over' : 'side'"
+               [opened]="(isHandset$ | async) === false">
+    <div style="text-align: center;">
+      <a routerLink="/" href="#">
+        <img width="50%" src="../../assets/icons/icon.svg"  alt="Logo"/>
+      </a>
+    </div>
+
+    <hr />
+
+    <mat-nav-list>
+      <a mat-list-item [routerLinkActiveOptions]="{ exact: true }" routerLinkActive="list-item-active" routerLink="/" href="#">
+        Dashboard
+      </a>
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="/calendar" href="#">
+        Calendar
+      </a>
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="/habits" href="#">
+        Habits
+      </a>
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="/categories" href="#">
+        Categories
+      </a>
+    </mat-nav-list>
+
+    <hr />
+
+    <mat-nav-list>
+      <a mat-list-item routerLinkActive="list-item-active" routerLink="/profile-settings" href="#">
+        Profile settings
+      </a>
+    </mat-nav-list>
+
+  </mat-sidenav>
+  <mat-sidenav-content>
+    <mat-toolbar color="primary">
+      <button
+              type="button"
+              aria-label="Toggle sidenav"
+              mat-icon-button
+              (click)="drawer.toggle()"
+              *ngIf="isHandset$ | async">
+        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+      </button>
+
+      <span class="logo">
+        <a routerLink="/" href="#">CatProgress</a>
+      </span>
+
+      <span class="spacer"></span>
+      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon-button with a menu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #menu="matMenu">
+
+
+
+        <button *ngIf="!authService.isAuthenticated()" routerLink="/login" mat-menu-item>
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+        <button *ngIf="authService.isAuthenticated()" (click)="logout()" mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,0 +1,50 @@
+<div style="margin-bottom: -4px;" *ngIf="!calendar">
+    <mat-progress-bar color="accent" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div class="container">
+
+    <p>{{ selectedDate.format('MMMM, YYYY') }}</p>
+
+    <div *ngIf="calendar">
+        <div *ngFor="let week of calendar.weeks" style="display: flex">
+            <div *ngFor="let day of week"
+                 style="flex-grow: 1; flex-shrink: 1; flex-basis: 0; border: 1px solid #cbcbcb;">
+                <div>{{ day.date.format('DD') }}</div>
+                <div>
+                    <div style="padding: 5px" *ngFor="let habit of day.habits; let i = index">
+                        <small>
+<!--                            <div *ngIf="isLoading(habit.id, day.date)">-->
+<!--                                <span class="spinner"></span>-->
+<!--                            </div>-->
+
+                            <button
+                                    [disabled]="isLoading(habit.id, day.date)"
+                                    [class.spinner]="isLoading(habit.id, day.date)"
+                                    class="small"
+                                    *ngIf="habit.completions.length === 0"
+                                    (click)="completeHabit(habit.id, day.date)"
+                                    mat-icon-button
+                            >
+                                <mat-icon>radio_button_unchecked</mat-icon>
+                            </button>
+
+                            <button
+                                    [disabled]="isLoading(habit.id, day.date)"
+                                    class="small"
+                                    [class.spinner]="isLoading(habit.id, day.date)"
+                                    *ngFor="let completion of habit.completions;"
+                                    (click)="incompleteHabit(habit.id, completion.id, day.date)"
+                                    mat-icon-button
+                            >
+                                <mat-icon>check_circle_outline</mat-icon>
+                            </button>
+
+                            {{ habit.title }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
