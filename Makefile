@@ -25,6 +25,10 @@ deploy:
     until docker-compose -f docker-compose-prod.yaml run --rm cat-progress-php-cli bin/console app:check-db-connection ; do sleep 1 ; done
 	docker-compose -f docker-compose-prod.yaml --rm cat-progress-php-fpm php bin/console doctrine:migrations:migrate --no-interaction
 
+deploy-vscale:
+	composer install --no-dev --optimize-autoloader
+	yarn build
+
 docker-up:
 	docker-compose up -d
 
