@@ -82,7 +82,7 @@ export class ApiService {
         }));
     }
 
-    public getCalendar(): Observable<CalendarResponse> {
+    public getCalendar(date: moment.Moment): Observable<CalendarResponse> {
         return this.httpClient.get<{
             success: boolean,
             weeks: {
@@ -95,9 +95,14 @@ export class ApiService {
                         id: string,
                         completed_at: moment.Moment,
                     }[],
+                    category: {
+                        id: string,
+                        title: string,
+                        color: string,
+                    }
                 }[],
             }[][],
-        }>(environment.apiBaseUrl + '/api/v1/habit/calendar/2021-12-01').pipe(map(response => {
+        }>(environment.apiBaseUrl + '/api/v1/habit/calendar/' + date.format('YYYY-MM-DD')).pipe(map(response => {
             return {
                 success: response.success,
                 weeks: response.weeks.map(weekItem => {
@@ -115,6 +120,11 @@ export class ApiService {
                                             completedAt: completionItem.completed_at,
                                         };
                                     }),
+                                    category: {
+                                        id: habitItem.category.id,
+                                        title: habitItem.category.title,
+                                        color: habitItem.category.color,
+                                    },
                                 };
                             }),
                         };
@@ -204,6 +214,12 @@ export class ApiService {
             title: request.title,
             description: request.description,
             color: request.color,
+        }, {});
+    }
+
+    public changeCategoryColor(id: string, color: string): Observable<any> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/category/' + id + '/change_color', {
+            color: color,
         }, {});
     }
 

@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {ApiService} from "../../api/api.service";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-registration-page',
@@ -18,10 +19,13 @@ export class RegistrationPageComponent implements OnInit {
       private fb: FormBuilder,
       private apiService: ApiService,
       private router: Router,
+      public navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
+    this.navService.title = 'Registration';
+
     this.registrationForm = this.fb.group({
       name: [null, [Validators.required,]],
       email: [null, [Validators.required, Validators.email]],

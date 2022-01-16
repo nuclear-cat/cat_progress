@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
 import {Subscription} from "rxjs";
 import {MatDialog} from '@angular/material/dialog';
 import {FormBuilder, FormGroup} from "@angular/forms";
@@ -6,6 +6,7 @@ import {ApiService} from "../../api/api.service";
 import {OverviewResponse} from "../../api/response/overview-response";
 import {TaskDialogComponent} from "../../task-dialog/task-dialog.component";
 import * as moment from "moment";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-dashboard',
@@ -22,19 +23,22 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   public isHabitsLoading: boolean = false;
   public habitsDate: moment.Moment = moment().startOf('day');
   public habitsCompleteLoading: string[] = [];
+  public title = 'Dashboard';
 
-  public test: boolean = false;
+  @Output() public pageReady = new EventEmitter();
 
   constructor(
       private apiService: ApiService,
       public dialog: MatDialog,
       private formBuilder: FormBuilder,
+      private navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
     this.loadOverview();
-
+    // this.navService.title = 'Dashboard';
+    this.pageReady.emit(true);
     this.addTaskForm = this.formBuilder.group({
       title: [null,],
     });

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-registration-info-page',
@@ -7,9 +8,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RegistrationInfoPageComponent implements OnInit {
 
-  constructor() { }
+  constructor(public navService: NavService,) { }
 
   ngOnInit(): void {
+    this.navService.title = 'Confirm registration';
   }
-
 }

@@ -41,6 +41,9 @@ import { RegistrationPageComponent } from './pages/registration-page/registratio
 import { RegistrationInfoPageComponent } from './pages/registration-info-page/registration-info-page.component';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
+import {MatBadgeModule} from "@angular/material/badge";
+import {MatTableModule} from "@angular/material/table";
 
 @NgModule({
     declarations: [
@@ -85,11 +88,14 @@ import { environment } from '../environments/environment';
         MatProgressBarModule,
         MatSelectModule,
         ServiceWorkerModule.register('ngsw-worker.js', {
-          enabled: environment.production,
-          // Register the ServiceWorker as soon as the app is stable
-          // or after 30 seconds (whichever comes first).
-          registrationStrategy: 'registerWhenStable:30000'
+            enabled: environment.production,
+            // Register the ServiceWorker as soon as the app is stable
+            // or after 30 seconds (whichever comes first).
+            registrationStrategy: 'registerWhenStable:30000'
         }),
+        MatProgressSpinnerModule,
+        MatBadgeModule,
+        MatTableModule,
     ],
     providers: [
         {

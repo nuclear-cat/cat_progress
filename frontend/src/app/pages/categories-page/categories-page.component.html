@@ -16,18 +16,25 @@
                     class="mp-list-item"
                     *ngFor="let category of categoriesResponse.categories; last as last">
                 <div mat-line>
-                    <span>
+                    <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="colorMenu">
                         <mat-icon [style]="'color: ' + category.color">radio_button_checked</mat-icon>
-                    </span>
+                    </button>
+
+                    <mat-menu #colorMenu="matMenu">
+                        <button mat-icon-button *ngFor="let color of colors;" (click)="changeColor(category.id, color)">
+                            <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>
+                        </button>
+                    </mat-menu>
+
                     <span>{{ category.title }}</span>
                     <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
                 </div>
 
-                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu">
+                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="categoryMenu">
                     <mat-icon>more_vert</mat-icon>
                 </button>
 
-                <mat-menu #menu="matMenu">
+                <mat-menu #categoryMenu="matMenu">
                     <button [routerLink]="'/edit-category/' + category.id" mat-menu-item>
                         <mat-icon>edit</mat-icon>
                         <span>Edit</span>

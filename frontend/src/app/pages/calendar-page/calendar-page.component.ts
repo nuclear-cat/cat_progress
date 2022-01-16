@@ -3,6 +3,7 @@ import * as moment from "moment";
 import {Moment} from "moment";
 import {CalendarResponse} from "../../api/response/calendar-response";
 import {ApiService} from "../../api/api.service";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-calendar-page',
@@ -17,12 +18,16 @@ export class CalendarPageComponent implements OnInit {
     habitId: string,
     date: moment.Moment,
   }[] = [];
+  public title: string = 'Calendar';
 
-  public constructor(private apiService: ApiService) {
+  public constructor(
+      private apiService: ApiService,
+      public navService: NavService,
+  ) {
   }
 
   public ngOnInit(): void {
-    this.apiService.getCalendar().subscribe((next: CalendarResponse) => {
+    this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
       this.calendar = next;
     });
   }
@@ -33,7 +38,7 @@ export class CalendarPageComponent implements OnInit {
 
     this.apiService.completeHabit(habitId, date).subscribe({
       next: () => {
-        this.apiService.getCalendar().subscribe((next: CalendarResponse) => {
+        this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
           this.calendar = next;
           this.loadingHabits = this.loadingHabits.filter(item => {
             return item.habitId !== habitId && item.date != date;
@@ -48,7 +53,7 @@ export class CalendarPageComponent implements OnInit {
 
     this.apiService.incompleteHabit(habitId, completionId).subscribe({
       next: () => {
-        this.apiService.getCalendar().subscribe((next: CalendarResponse) => {
+        this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
           this.calendar = next;
         });
       }

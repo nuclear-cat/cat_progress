@@ -12,6 +12,11 @@ export interface CalendarResponse {
                 id: string;
                 completedAt: moment.Moment;
             }[];
+            category: {
+                id: string;
+                title: string;
+                color: string;
+            }
         }[];
     }[][],
 }

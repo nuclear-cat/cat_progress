@@ -3,8 +3,8 @@ import {ApiService} from "../../api/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CategoryColorsResponse} from "../../api/response/category-colors-response";
 import {ActivatedRoute, Router} from "@angular/router";
-import {HabitResponse} from "../../api/response/habit-response";
 import {CategoryResponse} from "../../api/response/category-response";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-edit-category-page',
@@ -23,10 +23,13 @@ export class EditCategoryPageComponent implements OnInit {
       private formBuilder: FormBuilder,
       private route: ActivatedRoute,
       private router: Router,
+      public navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
+    this.navService.title = 'Edit category';
+
     const categoryId = this.route.snapshot.paramMap.get('categoryId') as string;
 
     this.apiService.getCategory(categoryId).subscribe({

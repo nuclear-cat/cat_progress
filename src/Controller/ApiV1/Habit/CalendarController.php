@@ -43,8 +43,8 @@ class CalendarController extends AbstractController
 
         return $this->json([
             'success' => true,
-            'weeks' => array_map(function (array $week) use ($habits) {
-                return array_map(function (\DateTimeImmutable $date) use ($habits) {
+            'weeks' => array_map(function (array $week) use ($habits): array {
+                return array_map(function (\DateTimeImmutable $date) use ($habits): array {
                     return [
                         'date' => $date->format(\DateTimeInterface::RFC3339_EXTENDED),
                         'habits' => array_values(array_map(function (Habit $habit) use ($date) {
@@ -58,6 +58,11 @@ class CalendarController extends AbstractController
                                         'completed_at' => $completion->getCompletedAt()->format(\DateTimeInterface::RFC3339_EXTENDED),
                                     ];
                                 }, $habit->getDayCompletions($date)),
+                                'category' => $habit->getCategory() ? [
+                                    'id' => $habit->getCategory()->getId()->toRfc4122(),
+                                    'title' => $habit->getCategory()->getTitle(),
+                                    'color' => $habit->getCategory()->getColor()->value,
+                                ] : null,
                             ];
                         }, array_filter($habits, function (Habit $habit) use ($date) {
                             return $habit->isActual($date, $this->getUser()->getTimezone());

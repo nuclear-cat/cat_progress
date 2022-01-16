@@ -3,6 +3,7 @@ import {ApiService} from "../../api/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {CategoryColorsResponse} from "../../api/response/category-colors-response";
 import {Router} from "@angular/router";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-create-category-page',
@@ -20,10 +21,13 @@ export class CreateCategoryPageComponent implements OnInit {
       private apiService: ApiService,
       private formBuilder: FormBuilder,
       private router: Router,
+      public navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
+    this.navService.title = 'Create category';
+
     this.apiService.getCategoryColors().subscribe({
       next: (next: CategoryColorsResponse) => {
         this.colors = next.colors;

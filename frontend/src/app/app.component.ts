@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {AuthService} from "./auth.service";
-import {ApiService} from "./api/api.service";
+import {AuthService} from "./services/auth.service";
 import {SwUpdate} from "@angular/service-worker";
 
 @Component({

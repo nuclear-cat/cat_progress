@@ -3,7 +3,8 @@ import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Subscription} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
-import {AuthService} from "../../auth.service";
+import {AuthService} from "../../services/auth.service";
+import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-login-page',
@@ -19,10 +20,13 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       private fb: FormBuilder,
       private authService: AuthService,
       private router: Router,
+      public navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
+    this.navService.title = 'Login';
+
     this.loginForm = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
       password: [null, [Validators.required, Validators.minLength(1)]],
