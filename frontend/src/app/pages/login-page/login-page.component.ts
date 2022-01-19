@@ -4,7 +4,6 @@ import {Subscription} from "rxjs";
 import {HttpErrorResponse} from "@angular/common/http";
 import {Router} from "@angular/router";
 import {AuthService} from "../../services/auth.service";
-import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-login-page',
@@ -20,12 +19,10 @@ export class LoginPageComponent implements OnInit, OnDestroy {
       private fb: FormBuilder,
       private authService: AuthService,
       private router: Router,
-      public navService: NavService,
   ) {
   }
 
   public ngOnInit(): void {
-    this.navService.title = 'Login';
 
     this.loginForm = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
@@ -57,7 +54,7 @@ export class LoginPageComponent implements OnInit, OnDestroy {
         this.error = err.error.message;
         this.loginForm.enable();
       },
-      next: (next) => {
+      next: () => {
         return this.router.navigate(['/']);
       },
     });

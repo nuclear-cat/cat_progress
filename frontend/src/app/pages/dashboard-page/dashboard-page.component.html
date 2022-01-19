@@ -1,40 +1,30 @@
-<div style="margin-bottom: -4px;" *ngIf="isLoading">
-    <mat-progress-bar color="accent" mode="indeterminate"></mat-progress-bar>
-</div>
-
 <div class="container">
-
     <div *ngIf="overview; else loading">
-
-        <mat-card style="padding: 0">
-
-            <div style="padding: 10px">
-                <h4>
-                    Active tasks ({{ overview.activeTasks.length }})
-                </h4>
-                <div>
-                    <div style="margin-bottom: -20px;">
-                        <form [formGroup]="addTaskForm" (ngSubmit)="addTaskSubmit()" novalidate>
-                            <mat-list-item>
-                                <div mat-line>
-                                    <mat-form-field appearance="outline" class="full-width-field">
-                                        <mat-label>Add task</mat-label>
-                                        <input matInput placeholder="Add task" formControlName="title">
-                                    </mat-form-field>
-                                </div>
-                            </mat-list-item>
-                        </form>
-                    </div>
+        <mat-card>
+            <mat-card-title>Active tasks ({{ overview.activeTasks.length }})</mat-card-title>
+            <div>
+                <div style="margin-bottom: -20px;">
+                    <form [formGroup]="addTaskForm" (ngSubmit)="addTaskSubmit()" novalidate>
+                        <mat-list-item>
+                            <div mat-line>
+                                <mat-form-field appearance="outline" class="full-width-field">
+                                    <mat-label>Add task</mat-label>
+                                    <input matInput placeholder="Add task" formControlName="title">
+                                </mat-form-field>
+                            </div>
+                        </mat-list-item>
+                    </form>
                 </div>
             </div>
 
             <mat-card-content>
                 <div *ngIf="overview.activeTasks.length === 0">No tasks</div>
-                <mat-list>
+
+                <mat-list style="padding-top: 0;">
                     <mat-list-item
                             class="mp-list-item"
-                            *ngFor="let task of overview.activeTasks; last as last">
-                        <div mat-line style="padding-left: 10px;">
+                            *ngFor="let task of overview.activeTasks; last as last; first as first">
+                        <div mat-line>
                             <button
                                     class="hover-icon-switch"
                                     mat-icon-button
@@ -66,7 +56,6 @@
                             </button>
                         </mat-menu>
                         <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-
                     </mat-list-item>
                 </mat-list>
             </mat-card-content>
@@ -77,8 +66,7 @@
         <mat-card>
             <mat-card-title>
                 <div style="display: flex; justify-content: space-between;">
-
-                    Habits ({{ habitsDate.format('dddd, DD') }})
+                    Habits
                     <div style="height: 0">
                         <a
                                 href="#"
@@ -100,6 +88,8 @@
 
                 </div>
             </mat-card-title>
+
+            <mat-card-subtitle>{{ habitsDate.format('dddd, DD') }}</mat-card-subtitle>
 
             <mat-card-content>
                 <div *ngIf="overview.habits.length === 0">No habits</div>

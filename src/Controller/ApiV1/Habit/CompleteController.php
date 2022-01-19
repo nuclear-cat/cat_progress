@@ -2,6 +2,7 @@
 
 namespace App\Controller\ApiV1\Habit;
 
+use App\Annotation\Uuid as UuidAnnotation;
 use App\Model\Progress\UseCase\Habit\Complete\Command;
 use App\Model\Progress\UseCase\Habit\Complete\Handler;
 use App\Security\UserIdentity;
@@ -16,7 +17,7 @@ use Symfony\Component\Uid\Ulid;
  */
 class CompleteController extends AbstractController
 {
-    #[Route('/api/v1/habit/{id}/complete', name: 'api.v1.habit.complete', methods: ['POST'])]
+    #[Route('/api/v1/habit/{id}/complete', name: 'api.v1.habit.complete', requirements: ['id' => UuidAnnotation::PATTERN], methods: ['POST'])]
     public function complete(
         string  $id,
         Request $request,

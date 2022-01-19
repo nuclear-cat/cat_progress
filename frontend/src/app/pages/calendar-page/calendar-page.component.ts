@@ -3,7 +3,7 @@ import * as moment from "moment";
 import {Moment} from "moment";
 import {CalendarResponse} from "../../api/response/calendar-response";
 import {ApiService} from "../../api/api.service";
-import {NavService} from "../../services/nav-service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-calendar-page',
@@ -22,19 +22,18 @@ export class CalendarPageComponent implements OnInit {
 
   public constructor(
       private apiService: ApiService,
-      public navService: NavService,
+      public route: ActivatedRoute,
   ) {
   }
 
   public ngOnInit(): void {
-    this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
-      this.calendar = next;
+    this.route.data.subscribe(data => {
+      this.calendar = data['calendar'];
     });
   }
 
   public completeHabit(habitId: string, date: moment.Moment): void {
     this.loadingHabits.push({habitId: habitId, date: date,});
-    console.log(this.loadingHabits );
 
     this.apiService.completeHabit(habitId, date).subscribe({
       next: () => {

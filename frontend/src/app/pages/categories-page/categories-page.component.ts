@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../api/api.service";
 import {CategoriesResponse} from "../../api/response/categories-response";
-import {NavService} from "../../services/nav-service";
 import {CategoryColorsResponse} from "../../api/response/category-colors-response";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-categories-page',
@@ -10,33 +10,27 @@ import {CategoryColorsResponse} from "../../api/response/category-colors-respons
   styleUrls: ['./categories-page.component.scss']
 })
 export class CategoriesPageComponent implements OnInit {
-
+  public displayedColumns: string[] = ['color', 'title', 'description', 'action',];
   public categoriesResponse!: CategoriesResponse;
   public colors: string[] = [];
   public title: string = 'Categories';
 
   public constructor(
       private apiService: ApiService,
-      public navService: NavService,
+      public route: ActivatedRoute,
   ) {
   }
 
   public ngOnInit(): void {
-    this.navService.title = 'Categories';
+    this.route.data.subscribe(data => {
+      this.categoriesResponse = data['categories'];
+    });
 
     this.apiService.getCategoryColors().subscribe({
       next: (next: CategoryColorsResponse) => {
         this.colors = next.colors;
       }
     });
-
-    this.apiService.getCategories().subscribe({
-      next: (next: CategoriesResponse) => {
-        this.categoriesResponse = next;
-      },
-      error: (error) => {
-      },
-    })
   }
 
   public deleteCategory(id: string): void {

@@ -2,6 +2,7 @@
 
 namespace App\Controller\ApiV1\Habit;
 
+use App\Annotation\Uuid as UuidAnnotation;
 use App\Model\Progress\Entity\Weekday;
 use App\Model\Progress\UseCase\Habit\Update\Command;
 use App\Model\Progress\UseCase\Habit\Update\Handler;
@@ -17,7 +18,7 @@ use Symfony\Component\Uid\Ulid;
  */
 class UpdateController extends AbstractController
 {
-    #[Route('/api/v1/habit/{id}/update', name: 'api.v1.habit.update', methods: ['POST'])]
+    #[Route('/api/v1/habit/{id}/update', name: 'api.v1.habit.update', requirements: ['id' => UuidAnnotation::PATTERN], methods: ['POST'])]
     public function create(
         string  $id,
         Request $request,

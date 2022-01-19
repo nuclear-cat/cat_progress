@@ -6,7 +6,7 @@ import {ApiService} from "../../api/api.service";
 import {OverviewResponse} from "../../api/response/overview-response";
 import {TaskDialogComponent} from "../../task-dialog/task-dialog.component";
 import * as moment from "moment";
-import {NavService} from "../../services/nav-service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard',
@@ -19,7 +19,6 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   public overviewSubscription!: Subscription;
   public taskCreatingMode = false;
   public addTaskForm!: FormGroup;
-  public isLoading: boolean = true;
   public isHabitsLoading: boolean = false;
   public habitsDate: moment.Moment = moment().startOf('day');
   public habitsCompleteLoading: string[] = [];
@@ -31,13 +30,16 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
       private apiService: ApiService,
       public dialog: MatDialog,
       private formBuilder: FormBuilder,
-      private navService: NavService,
+      public route: ActivatedRoute,
   ) {
   }
 
   public ngOnInit(): void {
+    this.route.data.subscribe(data => {
+      this.overview = data['overview'];
+    });
+
     this.loadOverview();
-    // this.navService.title = 'Dashboard';
     this.pageReady.emit(true);
     this.addTaskForm = this.formBuilder.group({
       title: [null,],
@@ -94,7 +96,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
   public completeHabit(habitId: string): void {
     this.apiService.completeHabit(habitId, this.habitsDate).subscribe({
-      next: (next) => {
+      next: () => {
         this.loadOverview();
       }}
     );
@@ -102,7 +104,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
 
   public incompleteHabit(habitId: string, completionId: string): void {
     this.apiService.incompleteHabit(habitId, completionId).subscribe({
-      next: (next) => {
+      next: () => {
         this.loadOverview();
       }}
     );
@@ -122,16 +124,11 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   }
 
   private loadOverview(): void {
-    this.isLoading = true;
     this.overviewSubscription = this.apiService.getOverview(this.habitsDate)
         .subscribe(
             overview => {
               this.overview = overview;
-              this.isLoading = false;
               this.isHabitsLoading = false;
-            },
-            error => {
-              this.isLoading = false;
             },
         );
   }

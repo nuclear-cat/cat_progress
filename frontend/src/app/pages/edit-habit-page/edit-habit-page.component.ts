@@ -6,7 +6,6 @@ import {Weekday} from "../../enums/weekday";
 import {Subscription} from "rxjs";
 import {CategoriesResponse} from "../../api/response/categories-response";
 import {HabitResponse} from "../../api/response/habit-response";
-import {NavService} from "../../services/nav-service";
 
 @Component({
   selector: 'app-edit-habit-page',
@@ -29,7 +28,6 @@ export class EditHabitPageComponent implements OnInit {
       private apiService: ApiService,
       private router: Router,
       private route: ActivatedRoute,
-      public navService: NavService,
   ) {
     for (let weekday in Weekday) {
       this.weekdays.push(weekday);
@@ -37,8 +35,6 @@ export class EditHabitPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.navService.title = 'Edit habit';
-
     const habitId = this.route.snapshot.paramMap.get('habitId') as string;
 
     this.categoriesSub = this.apiService.getCategories().subscribe({

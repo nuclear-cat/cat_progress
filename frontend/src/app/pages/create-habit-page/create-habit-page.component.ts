@@ -4,7 +4,6 @@ import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
 import {Weekday} from "../../enums/weekday";
 import {CategoriesResponse} from "../../api/response/categories-response";
 import {Router} from "@angular/router";
-import {NavService} from "../../services/nav-service";
 
 @Component({
     selector: 'app-create-habit-page',
@@ -24,7 +23,6 @@ export class CreateHabitPageComponent implements OnInit {
         private formBuilder: FormBuilder,
         private apiService: ApiService,
         private router: Router,
-        public navService: NavService,
         private changeDetectorRef: ChangeDetectorRef
     ) {
         for (let weekday in Weekday) {
@@ -33,7 +31,6 @@ export class CreateHabitPageComponent implements OnInit {
     }
 
     public ngOnInit(): void {
-        this.navService.title = 'Create habit';
         this.changeDetectorRef.detectChanges();
 
         this.apiService.getCategories().subscribe({

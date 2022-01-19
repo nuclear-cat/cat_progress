@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HabitsResponse} from "../../api/response/habits-response";
 import {ApiService} from "../../api/api.service";
-import {NavService} from "../../services/nav-service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-habits-page',
@@ -9,27 +9,20 @@ import {NavService} from "../../services/nav-service";
   styleUrls: ['./habits-page.component.scss']
 })
 export class HabitsPageComponent implements OnInit {
-
-  public displayedColumns: string[] = ['title', 'description', 'action',];
+  public displayedColumns: string[] = ['title', 'description', 'weekdays', 'action',];
   public title: string = 'Habits';
 
   public habitsResponse!: HabitsResponse;
 
   public constructor(
       private apiService: ApiService,
-      public navService: NavService,
+      public route: ActivatedRoute,
   ) {
   }
 
   public ngOnInit(): void {
-    this.navService.title = 'Habits';
-
-    this.apiService.getHabits().subscribe({
-      next: (next) => {
-        this.habitsResponse = next;
-      },
-      error: (error) => {
-      },
+    this.route.data.subscribe(data => {
+      this.habitsResponse = data['habits'];
     });
   }
 

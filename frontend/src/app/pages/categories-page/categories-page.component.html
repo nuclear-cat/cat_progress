@@ -1,4 +1,5 @@
 <div class="container">
+
     <div *ngIf="categoriesResponse; else loading">
         <div fxLayout="row" fxLayoutGap="1px" fxLayout.sm="column">
             <h3 fxFlex="2 1 auto" fxLayoutAlign="start">
@@ -11,42 +12,98 @@
             </div>
         </div>
 
-        <mat-list>
-            <mat-list-item
-                    class="mp-list-item"
-                    *ngFor="let category of categoriesResponse.categories; last as last">
-                <div mat-line>
-                    <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="colorMenu">
-                        <mat-icon [style]="'color: ' + category.color">radio_button_checked</mat-icon>
+        <table style="width: 100%;" mat-table [dataSource]="categoriesResponse.categories" class="mat-elevation-z0">
+
+            <ng-container matColumnDef="color">
+                <th style="padding-left: 0; text-align: center;" mat-header-cell *matHeaderCellDef>Color</th>
+                <td style="width: 1%; padding-left: 0; text-align: center;" mat-cell *matCellDef="let category">
+                    <div mat-line>
+                        <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="colorMenu">
+                            <mat-icon [style]="'color: ' + category.color">radio_button_checked</mat-icon>
+                        </button>
+
+                        <mat-menu #colorMenu="matMenu">
+                            <button mat-icon-button *ngFor="let color of colors;"
+                                    (click)="changeColor(category.id, color)">
+                                <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+                <th mat-header-cell *matHeaderCellDef>Title</th>
+                <td mat-cell *matCellDef="let category"> {{category.title}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td  style="width: 1%;" mat-cell *matCellDef="let category">
+                    <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="categoryMenu">
+                        <mat-icon>more_vert</mat-icon>
                     </button>
 
-                    <mat-menu #colorMenu="matMenu">
-                        <button mat-icon-button *ngFor="let color of colors;" (click)="changeColor(category.id, color)">
-                            <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>
+                    <mat-menu #categoryMenu="matMenu">
+                        <button [routerLink]="'/edit-category/' + category.id" mat-menu-item>
+                            <mat-icon>edit</mat-icon>
+                            <span>Edit</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button (click)="deleteCategory(category.id)" mat-menu-item>
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
                         </button>
                     </mat-menu>
+                </td>
+            </ng-container>
 
-                    <span>{{ category.title }}</span>
-                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                </div>
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
 
-                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="categoryMenu">
-                    <mat-icon>more_vert</mat-icon>
-                </button>
 
-                <mat-menu #categoryMenu="matMenu">
-                    <button [routerLink]="'/edit-category/' + category.id" mat-menu-item>
-                        <mat-icon>edit</mat-icon>
-                        <span>Edit</span>
-                    </button>
-                    <mat-divider></mat-divider>
-                    <button (click)="deleteCategory(category.id)" mat-menu-item>
-                        <mat-icon>delete</mat-icon>
-                        <span>Delete</span>
-                    </button>
-                </mat-menu>
-            </mat-list-item>
-        </mat-list>
+<!--        <mat-list>-->
+<!--            <mat-list-item-->
+<!--                    class="mp-list-item"-->
+<!--                    *ngFor="let category of categoriesResponse.categories; last as last">-->
+<!--                <div mat-line>-->
+<!--                    <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="colorMenu">-->
+<!--                        <mat-icon [style]="'color: ' + category.color">radio_button_checked</mat-icon>-->
+<!--                    </button>-->
+
+<!--                    <mat-menu #colorMenu="matMenu">-->
+<!--                        <button mat-icon-button *ngFor="let color of colors;" (click)="changeColor(category.id, color)">-->
+<!--                            <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>-->
+<!--                        </button>-->
+<!--                    </mat-menu>-->
+
+<!--                    <span>{{ category.title }}</span>-->
+<!--                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>-->
+<!--                </div>-->
+
+<!--                <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="categoryMenu">-->
+<!--                    <mat-icon>more_vert</mat-icon>-->
+<!--                </button>-->
+
+<!--                <mat-menu #categoryMenu="matMenu">-->
+<!--                    <button [routerLink]="'/edit-category/' + category.id" mat-menu-item>-->
+<!--                        <mat-icon>edit</mat-icon>-->
+<!--                        <span>Edit</span>-->
+<!--                    </button>-->
+<!--                    <mat-divider></mat-divider>-->
+<!--                    <button (click)="deleteCategory(category.id)" mat-menu-item>-->
+<!--                        <mat-icon>delete</mat-icon>-->
+<!--                        <span>Delete</span>-->
+<!--                    </button>-->
+<!--                </mat-menu>-->
+<!--            </mat-list-item>-->
+<!--        </mat-list>-->
     </div>
 </div>
 

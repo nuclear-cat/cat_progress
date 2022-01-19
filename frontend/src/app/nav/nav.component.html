@@ -1,3 +1,7 @@
+<div *ngIf="isLoading$ | async" style="position: fixed;  z-index: 2;  width: 100%;">
+  <mat-progress-bar color="accent" mode="indeterminate"></mat-progress-bar>
+</div>
+
 <mat-sidenav-container class="sidenav-container">
 
   <mat-sidenav #drawer class="sidenav" fixedInViewport
