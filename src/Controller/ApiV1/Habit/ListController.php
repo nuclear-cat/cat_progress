@@ -35,6 +35,11 @@ class ListController extends AbstractController
                     'weekdays' => array_map(function (HabitWeekday $habitWeekday) {
                         return $habitWeekday->getWeekday()->value;
                     }, $habit->getHabitWeekdays()),
+                    'category' => [
+                        'id' => $habit->getCategory()->getId()->toRfc4122(),
+                        'title' => $habit->getCategory()->getTitle(),
+                        'color' => $habit->getCategory()->getColor()->value,
+                    ],
                 ];
             }, $habits),
         ]);

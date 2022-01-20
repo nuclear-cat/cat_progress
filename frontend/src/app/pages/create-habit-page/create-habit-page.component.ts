@@ -14,7 +14,7 @@ export class CreateHabitPageComponent implements OnInit {
     public form!: FormGroup;
     public weekdays: string[] = [];
     public isLoading = true;
-    public categoriesResponse!: CategoriesResponse;
+    public categories: { id: string, title: string }[] = [];
 
     public title: string = 'Create habit';
     public submitButtonTitle = 'Create';
@@ -35,7 +35,7 @@ export class CreateHabitPageComponent implements OnInit {
 
         this.apiService.getCategories().subscribe({
             next: (next: CategoriesResponse) => {
-                this.categoriesResponse = next;
+                this.categories = next.categories;
             }
         });
 

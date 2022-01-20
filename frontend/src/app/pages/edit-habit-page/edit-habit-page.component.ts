@@ -17,7 +17,7 @@ export class EditHabitPageComponent implements OnInit {
   public form!: FormGroup;
   public weekdays: string[] = [];
   public isLoading = true;
-  public categoriesResponse!: CategoriesResponse;
+  public categories: { id: string, title: string }[] = [];
   public habitSub?: Subscription;
   public categoriesSub?: Subscription;
   public title: string = 'Edit habit';
@@ -39,7 +39,7 @@ export class EditHabitPageComponent implements OnInit {
 
     this.categoriesSub = this.apiService.getCategories().subscribe({
       next: (next: CategoriesResponse) => {
-        this.categoriesResponse = next;
+        this.categories = next.categories;
       },
     });
 

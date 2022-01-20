@@ -4,6 +4,7 @@ import {Moment} from "moment";
 import {CalendarResponse} from "../../api/response/calendar-response";
 import {ApiService} from "../../api/api.service";
 import {ActivatedRoute} from "@angular/router";
+import {Weekday} from "../../enums/weekday";
 
 @Component({
   selector: 'app-calendar-page',
@@ -11,9 +12,11 @@ import {ActivatedRoute} from "@angular/router";
   styleUrls: ['./calendar-page.component.scss'],
 })
 export class CalendarPageComponent implements OnInit {
-
-  public selectedDate: Moment = moment();
+  public currentDate: Moment = moment().startOf('day');
+  public selectedMonth: Moment = moment().startOf('month');
   public calendar!: CalendarResponse;
+  public weekdays: string[] = Object.keys(Weekday);
+
   public loadingHabits: {
     habitId: string,
     date: moment.Moment,
@@ -27,6 +30,7 @@ export class CalendarPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+
     this.route.data.subscribe(data => {
       this.calendar = data['calendar'];
     });
@@ -37,7 +41,7 @@ export class CalendarPageComponent implements OnInit {
 
     this.apiService.completeHabit(habitId, date).subscribe({
       next: () => {
-        this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
+        this.apiService.getCalendar(this.selectedMonth).subscribe((next: CalendarResponse) => {
           this.calendar = next;
           this.loadingHabits = this.loadingHabits.filter(item => {
             return item.habitId !== habitId && item.date != date;
@@ -52,7 +56,7 @@ export class CalendarPageComponent implements OnInit {
 
     this.apiService.incompleteHabit(habitId, completionId).subscribe({
       next: () => {
-        this.apiService.getCalendar(this.selectedDate).subscribe((next: CalendarResponse) => {
+        this.apiService.getCalendar(this.selectedMonth).subscribe((next: CalendarResponse) => {
           this.calendar = next;
         });
       }

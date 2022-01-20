@@ -1,15 +1,37 @@
 <div class="container">
 
-    <h3>{{ selectedDate.format('MMMM, YYYY') }}</h3>
+    <h3>{{ selectedMonth.format('MMMM, YYYY') }}</h3>
 
     <div *ngIf="calendar" class="mat-elevation-z2">
+
+        <div style="display: flex">
+            <div *ngFor="let weekday of weekdays" class="calendar-cell">
+                <div class="calendar-cell-header">{{ weekday }}</div>
+            </div>
+        </div>
+
         <div *ngFor="let week of calendar.weeks" style="display: flex">
-            <div *ngFor="let day of week"
-                 style="flex-grow: 1; flex-shrink: 1; flex-basis: 0; border: 1px solid #cbcbcb;">
+            <div
+                    class="calendar-cell"
+                    *ngFor="let day of week"
+                    [class.active]="day.date.diff(currentDate) === 0"
+            >
+                <div
+                        [class.active]="day.date.diff(currentDate) === 0"
+                        class="calendar-cell-header"
+                >
+                    <ng-container *ngIf="day.date.format('DD MM') !== currentDate.format('DD MM')">
+                        {{ day.date.format('DD') }}
+                    </ng-container>
 
-                <div style="background-color: #f5f5f5; padding: 2px 6px; font-size: 14px;">{{ day.date.format('DD') }}</div>
+                    <ng-container *ngIf="day.date.format('DD MM') === currentDate.format('DD MM')">
+                        {{ day.date.format('MMMM DD') }}
+                    </ng-container>
+                </div>
 
-                <div style="min-height: 80px;">
+                <div
+                        style="min-height: 80px"
+                >
                     <div
                             class="mat-elevation-z1"
                             [style]="'background-color:' + habit.category.color + '; padding: 5px; margin: 3px; border-radius: 5px;'"

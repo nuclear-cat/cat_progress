@@ -34,9 +34,11 @@
                 <mat-label>Category</mat-label>
                 <mat-select formControlName="category">
                     <mat-option
-                            *ngFor="let category of categoriesResponse.categories; let i = index"
+                            *ngFor="let category of categories; let i = index"
                             [value]="category.id"
-                    >{{ category.title }}</mat-option>
+                    >
+                        <span>{{ category.title }}</span>
+                    </mat-option>
                 </mat-select>
             </mat-form-field>
 
