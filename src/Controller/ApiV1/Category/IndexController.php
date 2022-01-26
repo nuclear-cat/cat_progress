@@ -23,7 +23,7 @@ class IndexController extends AbstractController
         CategoryRepository $categoryRepository,
     ): JsonResponse {
         $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
-        $category = $categoryRepository->get(Ulid::fromString($id));
+        $category = $categoryRepository->getByIdAndUser(Ulid::fromString($id), $user);
 
         return $this->json([
             'success' => true,

@@ -21,9 +21,21 @@ import {HabitsPageResolver} from "./pages/habits-page/habits-page.resolver";
 const routes: Routes = [
   {
     path: '', component: NavComponent, canActivate: [AuthGuard], children: [
-      {path: '', redirectTo: '/', pathMatch: 'full'},
       {
         path: '',
+        redirectTo: '/',
+        pathMatch: 'full'
+      },
+      {
+        path: '',
+        component: DashboardPageComponent,
+        canActivate: [AuthGuard],
+        resolve: {
+          overview: DashboardPageResolver,
+        },
+      },
+      {
+        path: 'dashboard/:date',
         component: DashboardPageComponent,
         canActivate: [AuthGuard],
         resolve: {
@@ -46,8 +58,16 @@ const routes: Routes = [
           habits: HabitsPageResolver,
         },
       },
-      {path: 'create-habit', component: CreateHabitPageComponent, canActivate: [AuthGuard],},
-      {path: 'edit-habit/:habitId', component: EditHabitPageComponent, canActivate: [AuthGuard],},
+      {
+        path: 'create-habit',
+        component: CreateHabitPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'edit-habit/:habitId',
+        component: EditHabitPageComponent,
+        canActivate: [AuthGuard],
+      },
       {
         path: 'categories',
         component: CategoriesPageComponent,
@@ -56,8 +76,16 @@ const routes: Routes = [
           categories: CategoriesPageResolver,
         },
       },
-      {path: 'edit-category/:categoryId', component: EditCategoryPageComponent, canActivate: [AuthGuard],},
-      {path: 'create-category', component: CreateCategoryPageComponent, canActivate: [AuthGuard],},
+      {
+        path: 'edit-category/:categoryId',
+        component: EditCategoryPageComponent,
+        canActivate: [AuthGuard],
+      },
+      {
+        path: 'create-category',
+        component: CreateCategoryPageComponent,
+        canActivate: [AuthGuard],
+      },
     ],
   },
   {path: 'registration', component: RegistrationPageComponent,},

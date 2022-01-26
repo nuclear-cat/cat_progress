@@ -32,6 +32,7 @@ class CreateController extends AbstractController
         }, $data['weekdays']);
         $command->categoryId = Ulid::fromString($data['category_id']);
         $command->userId = Ulid::fromString($this->getUser()->getUserIdentifier());
+        $command->timezone = $this->getUser()->getTimezone();
 
         $id = $handler->handle($command);
 

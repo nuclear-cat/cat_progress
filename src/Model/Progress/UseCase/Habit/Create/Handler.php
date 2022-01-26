@@ -30,7 +30,9 @@ class Handler
             $command->title,
             $category,
             new \DateTimeImmutable(),
-            new \DateTimeImmutable(),
+            (new \DateTimeImmutable())
+                ->setTime(0, 0, 0)
+                ->setTimezone(new \DateTimeZone('+1')),
             $user,
         ))->setDescription($command->description);
 

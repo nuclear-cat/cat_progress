@@ -2,6 +2,8 @@
 
 namespace App\Controller\ApiV1\Category;
 
+use App\Model\Progress\Repository\CategoryRepository;
+use App\Model\Progress\Repository\UserRepository;
 use App\Model\Progress\UseCase\Category\Delete\Command;
 use App\Model\Progress\UseCase\Category\Delete\Handler;
 use App\Security\UserIdentity;
@@ -17,11 +19,16 @@ class DeleteController extends AbstractController
 {
     #[Route('/api/v1/category/{id}/delete', name: 'api.v1.category.delete', methods: ['POST'])]
     public function delete(
-        string  $id,
-        Handler $handler,
+        string             $id,
+        Handler            $handler,
+        UserRepository     $userRepository,
+        CategoryRepository $categoryRepository,
     ): JsonResponse {
+        $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
+        $category = $categoryRepository->getByIdAndUser(Ulid::fromString($id), $user);
+
         $command = new Command(
-            id: Ulid::fromString($id),
+            id: $category->getId(),
         );
 
         $handler->handle($command);

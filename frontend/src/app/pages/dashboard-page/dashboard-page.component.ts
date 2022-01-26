@@ -7,6 +7,7 @@ import {OverviewResponse} from "../../api/response/overview-response";
 import {TaskDialogComponent} from "../../task-dialog/task-dialog.component";
 import * as moment from "moment";
 import {ActivatedRoute} from "@angular/router";
+import {HabitCompletionType} from "../../enums/habit-completion-type";
 
 @Component({
   selector: 'app-dashboard',
@@ -23,7 +24,7 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   public habitsDate: moment.Moment = moment().startOf('day');
   public habitsCompleteLoading: string[] = [];
   public title = 'Dashboard';
-
+  public completionType = HabitCompletionType;
   @Output() public pageReady = new EventEmitter();
 
   constructor(
@@ -35,6 +36,8 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   }
 
   public ngOnInit(): void {
+    this.route.paramMap.subscribe();
+
     this.route.data.subscribe(data => {
       this.overview = data['overview'];
     });
@@ -94,11 +97,15 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  public completeHabit(habitId: string): void {
-    this.apiService.completeHabit(habitId, this.habitsDate).subscribe({
-      next: () => {
-        this.loadOverview();
-      }}
+  public completeHabit(habitId: string, completionType: string): void {
+    this.apiService.completeHabit(habitId, {
+      date: moment(),
+      completionType: completionType,
+    }).subscribe({
+          next: () => {
+            this.loadOverview();
+          }
+        }
     );
   }
 
@@ -142,7 +149,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
+      if (result.success) {
+        this.loadOverview();
+      }
     });
   }
 

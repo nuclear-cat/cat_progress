@@ -15,7 +15,7 @@ class WeekdayType extends Type
         return self::WEEKDAY;
     }
 
-    public function convertToDatabaseValue($value, AbstractPlatform $platform): string
+    public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): string
     {
         if (!$value instanceof Weekday) {
             throw new \InvalidArgumentException('Invalid weekday.');
@@ -24,7 +24,7 @@ class WeekdayType extends Type
         return $value->value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): Weekday
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): Weekday
     {
         return Weekday::from($value);
     }

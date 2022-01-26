@@ -3,27 +3,27 @@
 namespace App\Model\Progress\Repository;
 
 use App\Exception\NotFoundException;
-use App\Model\Progress\Entity\Category;
 use App\Model\Progress\Entity\Habit;
+use App\Model\Progress\Entity\Project;
 use App\Model\Progress\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Uid\Ulid;
 
 /**
- * @method Category|null find($id, $lockMode = null, $lockVersion = null)
- * @method Category|null findOneBy(array $criteria, array $orderBy = null)
- * @method Category[]    findAll()
- * @method Category[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Project|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Project|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Project[]    findAll()
+ * @method Project[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CategoryRepository extends ServiceEntityRepository
+class ProjectRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Category::class);
+        parent::__construct($registry, Project::class);
     }
 
-    public function get(Ulid $id): Category
+    public function get(Ulid $id): Project
     {
         $result = $this->find($id);
 
@@ -34,7 +34,7 @@ class CategoryRepository extends ServiceEntityRepository
         throw new NotFoundException("Category {$id->toRfc4122()} not found.");
     }
 
-    public function getByIdAndUser(Ulid $id, User $user): Category
+    public function getByIdAndUser(Ulid $id, User $user): Project
     {
         $category = $this->findOneBy(['id' => $id, 'user' => $user]);
 
@@ -48,7 +48,7 @@ class CategoryRepository extends ServiceEntityRepository
     /**
      * @throws \Doctrine\ORM\ORMException
      */
-    public function add(Category $habit): void
+    public function add(Project $habit): void
     {
         $this->_em->persist($habit);
     }
@@ -70,7 +70,7 @@ class CategoryRepository extends ServiceEntityRepository
     /**
      * @throws \Doctrine\ORM\ORMException
      */
-    public function remove(Category $category): void
+    public function remove(Project $category): void
     {
         $this->_em->remove($category);
     }

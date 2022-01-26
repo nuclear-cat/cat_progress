@@ -23,7 +23,9 @@ class Handler
             $habit,
             new \DateTimeImmutable(),
             $command->completedAt,
-        ))->setTotalPoints($habit->getTotalPoints());
+        ))
+            ->setTotalPoints($habit->getTotalPoints())
+            ->setType($command->type);
 
         $this->entityManager->persist($completion);
         $this->entityManager->flush();

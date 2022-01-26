@@ -11,7 +11,7 @@ class CalendarService
 
         $nextDay = $date
             ->modify('first day of this month')
-            ->setTimezone($timezone)
+//            ->setTimezone($timezone)
             ->setTime(0, 0, 0)
             ->modify('this week Monday');
 

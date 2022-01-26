@@ -11,12 +11,12 @@ final class CategoryColorType extends StringType
 {
     public const NAME = 'progress_category_color';
 
-    #[Pure] public function convertToDatabaseValue($value, AbstractPlatform $platform): mixed
+    #[Pure] public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed
     {
         return $value instanceof CategoryColor ? $value->value : $value;
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform): ?CategoryColor
+    public function convertToPHPValue(mixed $value, AbstractPlatform $platform): ?CategoryColor
     {
         return !empty($value) ? CategoryColor::from($value) : null;
     }

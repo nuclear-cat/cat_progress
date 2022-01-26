@@ -5,6 +5,7 @@ import {CalendarResponse} from "../../api/response/calendar-response";
 import {ApiService} from "../../api/api.service";
 import {ActivatedRoute} from "@angular/router";
 import {Weekday} from "../../enums/weekday";
+import {HabitCompletionType} from "../../enums/habit-completion-type";
 
 @Component({
   selector: 'app-calendar-page',
@@ -30,7 +31,6 @@ export class CalendarPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-
     this.route.data.subscribe(data => {
       this.calendar = data['calendar'];
     });
@@ -39,7 +39,10 @@ export class CalendarPageComponent implements OnInit {
   public completeHabit(habitId: string, date: moment.Moment): void {
     this.loadingHabits.push({habitId: habitId, date: date,});
 
-    this.apiService.completeHabit(habitId, date).subscribe({
+    this.apiService.completeHabit(habitId, {
+      date: date,
+      completionType: HabitCompletionType.Success,
+    }).subscribe({
       next: () => {
         this.apiService.getCalendar(this.selectedMonth).subscribe((next: CalendarResponse) => {
           this.calendar = next;

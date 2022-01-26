@@ -39,6 +39,7 @@
                                 </mat-icon>
                             </button>
                             <span>{{ task.title }}</span>
+                            <span *ngIf="task.description">, {{ task.description }}</span>
                         </div>
                         <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
                                 aria-label="Example icon-button with a menu">
@@ -72,20 +73,17 @@
                                 href="#"
                                 (click)="decrementHabitsDay()"
                                 mat-icon-button color="primary"
-                                aria-label="Example icon button with a home icon"
                         >
                             <mat-icon>arrow_left</mat-icon>
                         </a>
                         <a
-                                href="#"
                                 (click)="incrementHabitsDay()"
+                                href="#"
                                 mat-icon-button color="primary"
-                                aria-label="Example icon button with a home icon"
                         >
                             <mat-icon>arrow_right</mat-icon>
                         </a>
                     </div>
-
                 </div>
             </mat-card-title>
 
@@ -102,7 +100,7 @@
                                     class="hover-icon-switch"
                                     *ngIf="habit.completions.length === 0"
                                     mat-icon-button
-                                    (click)="$event.stopPropagation(); completeHabit(habit.id)"
+                                    (click)="$event.stopPropagation(); completeHabit(habit.id, completionType.Success)"
                             >
                                 <mat-icon class="mat-24 hover-icon-switch_on-non-hover">radio_button_unchecked
                                 </mat-icon>
@@ -129,31 +127,51 @@
                             </button>
 
                             <span *ngIf="habit.completions.length > 0"><s>{{ habit.title }}</s></span>
-                    <span *ngIf="habit.completions.length === 0">{{ habit.title }}</span>
+                            <span *ngIf="habit.completions.length === 0">{{ habit.title }}</span>
 
-                    <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                </div>
+                            <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
+                        </div>
 
-                <button
-                        mat-icon-button
-                        (click)="$event.stopPropagation();"
-                        [matMenuTriggerFor]="menu"
-                        aria-label="Example icon-button with a menu"
-                >
-                    <mat-icon>more_vert</mat-icon>
-                </button>
+                        <button
+                                mat-icon-button
+                                (click)="$event.stopPropagation();"
+                                [matMenuTriggerFor]="menu"
+                        >
+                            <mat-icon>more_vert</mat-icon>
+                        </button>
 
-                <mat-menu #menu="matMenu">
-                    <button (click)="openTaskDialog(habit)" mat-menu-item>
-                        <mat-icon>edit</mat-icon>
-                        <span>Edit</span>
-                    </button>
-                    <mat-divider></mat-divider>
-                    <button (click)="deleteTask(habit.id)" mat-menu-item>
-                        <mat-icon>delete</mat-icon>
-                        <span>Delete</span>
-                    </button>
-                </mat-menu>
+                        <mat-menu #menu="matMenu">
+                            <button (click)="completeHabit(habit.id, completionType.Success)" mat-menu-item>
+                                <mat-icon>check_circle_outline</mat-icon>
+                                <span>Complete as success</span>
+                            </button>
+                            <button (click)="completeHabit(habit.id, completionType.Partially)" mat-menu-item>
+                                <mat-icon>check_circle_outline</mat-icon>
+                                <span>Complete as partially</span>
+                            </button>
+                            <button (click)="completeHabit(habit.id, completionType.Lazy)" mat-menu-item>
+                                <mat-icon>cancel</mat-icon>
+                                <span>Complete as lazy</span>
+                            </button>
+                            <button (click)="completeHabit(habit.id, completionType.Alternative)" mat-menu-item>
+                                <mat-icon>check_circle_outline</mat-icon>
+                                <span>Complete as alternative</span>
+                            </button>
+                            <button (click)="completeHabit(habit.id, completionType.Failed)" mat-menu-item>
+                                <mat-icon>cancel</mat-icon>
+                                <span>Complete as failed</span>
+                            </button>
+                            <mat-divider></mat-divider>
+                            <button (click)="openTaskDialog(habit)" mat-menu-item>
+                                <mat-icon>edit</mat-icon>
+                                <span>Edit</span>
+                            </button>
+                            <mat-divider></mat-divider>
+                            <button (click)="deleteTask(habit.id)" mat-menu-item>
+                                <mat-icon>delete</mat-icon>
+                                <span>Delete</span>
+                            </button>
+                        </mat-menu>
 
                     </mat-list-item>
                 </mat-list>
@@ -176,6 +194,8 @@
                                 <mat-icon class="mat-24">check_circle_outline</mat-icon>
                             </button>
                             <span><s>{{ task.title }}</s></span>
+                            <span *ngIf="task.description"><s>, {{ task.description }}</s></span>
+
                             <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
                         </div>
 

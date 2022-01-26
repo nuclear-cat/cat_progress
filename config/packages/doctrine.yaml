@@ -4,6 +4,7 @@ doctrine:
     server_version: '13'
     mapping_types:
       progress_weekday: string
+      progress_habit_completion_type: string
       user_status: string
     types:
       user_email: App\Model\User\DBAL\EmailType
@@ -12,6 +13,7 @@ doctrine:
 
       progress_weekday: App\Model\Progress\DBAL\WeekdayType
       progress_category_color: App\Model\Progress\DBAL\CategoryColorType
+      progress_habit_completion_type: App\Model\Progress\DBAL\HabitCompletionTypeType
 
   orm:
     auto_generate_proxy_classes: true

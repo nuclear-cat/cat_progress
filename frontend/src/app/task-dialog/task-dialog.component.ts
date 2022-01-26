@@ -38,13 +38,8 @@ export class TaskDialogComponent implements OnInit {
     this.apiService.updateTask(this.data.task.id, {
       title: this.form.get('title')?.value,
       description: this.form.get('description')?.value,
-    }).subscribe({
-      complete() {
-
-      },
+    }).subscribe(next => {
+          this.dialogRef.close(next);
     });
-
-    this.dialogRef.close();
   }
-
 }

@@ -3,6 +3,8 @@
 namespace App\Controller\ApiV1\Habit;
 
 use App\Annotation\Uuid as UuidAnnotation;
+use App\Model\Progress\Repository\HabitRepository;
+use App\Model\Progress\Repository\UserRepository;
 use App\Model\Progress\UseCase\Habit\Incomplete\Command;
 use App\Model\Progress\UseCase\Habit\Incomplete\Handler;
 use App\Security\UserIdentity;
@@ -22,11 +24,15 @@ class IncompleteController extends AbstractController
         string  $id,
         Request $request,
         Handler $handler,
+        UserRepository  $userRepository,
+        HabitRepository $habitRepository,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
+        $habit = $habitRepository->getByIdAndUser(Ulid::fromString($id), $user);
 
         $command = new Command(
-            habitId: Ulid::fromString($id),
+            habitId: $habit->getId(),
             completionId: Ulid::fromString($data['completion_id']),
         );
 

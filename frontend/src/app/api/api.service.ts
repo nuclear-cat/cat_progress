@@ -16,6 +16,7 @@ import {UpdateCategoryRequest} from "./request/update-category-request";
 import {CategoryResponse} from "./response/category-response";
 import {AuthResponse} from "./response/auth-response";
 import {RegisterRequest} from "./request/register-request";
+import {CompleteHabitRequest} from "./request/complete-habit-request";
 
 @Injectable({
     providedIn: 'root'
@@ -231,9 +232,10 @@ export class ApiService {
         return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/category/' + id + '/delete', {});
     }
 
-    public completeHabit(id: string, date: moment.Moment): Observable<{ success: boolean }> {
+    public completeHabit(id: string, request: CompleteHabitRequest): Observable<{ success: boolean }> {
         return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/habit/' + id + '/complete', {
-            completed_at: date.format('YYYY-MM-DD'),
+            completed_at: request.date.format('YYYY-MM-DD'),
+            completion_type: request.completionType,
         }, {});
     }
 

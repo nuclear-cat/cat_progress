@@ -31,7 +31,7 @@ class Task
 
     #[ORM\ManyToOne(targetEntity: Category::class)]
     #[ORM\JoinColumn(name: 'category_id', referencedColumnName: 'id', nullable: true)]
-    private ?Category $category;
+    private ?Category $category = null;
 
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]

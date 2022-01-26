@@ -24,10 +24,21 @@ class TaskRepository extends ServiceEntityRepository
 
     public function get(Ulid $id): Task
     {
-        $result = $this->find($id);
+        $task = $this->find($id);
 
-        if ($result) {
-            return $result;
+        if ($task) {
+            return $task;
+        }
+
+        throw new NotFoundException("Task {$id->toRfc4122()} not found.");
+    }
+
+    public function getByIdAndUser(Ulid $id, User $user): Task
+    {
+        $task = $this->findOneBy(['id' => $id, 'user' => $user]);
+
+        if ($task) {
+            return $task;
         }
 
         throw new NotFoundException("Task {$id->toRfc4122()} not found.");

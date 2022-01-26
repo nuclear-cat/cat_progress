@@ -38,7 +38,7 @@ class OverviewController extends AbstractController
 
         $todayHabits = $habitRepository->getForCalendar(
             $user,
-            $habitsDate,
+            $habitsDate->setTime(0, 0, 0),
             $habitsDate->setTime(23, 59, 59),
             $habitsWeekday,
         );
@@ -47,7 +47,7 @@ class OverviewController extends AbstractController
             'success' => true,
             'today_habits' => array_map(function (Habit $habit) {
                 return [
-                    'id' => $habit->getId(),
+                    'id' => $habit->getId()->toRfc4122(),
                     'title' => $habit->getTitle(),
                     'description' => $habit->getDescription(),
                     'completions' => array_map(function (HabitCompletion $completion) {

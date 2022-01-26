@@ -30,6 +30,12 @@ class HabitCompletion
     #[ORM\Column(name: 'total_points', type: 'smallint')]
     private int $totalPoints = 1;
 
+    #[ORM\Column(name: 'comment', type: 'text', nullable: true)]
+    private ?string $comment = null;
+
+    #[ORM\Column(name: 'type', type: 'progress_habit_completion_type', nullable: false)]
+    private HabitCompletionType $type;
+
     public function __construct(
         Ulid $id,
         Habit $habit,
@@ -40,6 +46,7 @@ class HabitCompletion
         $this->habit = $habit;
         $this->createdAt = $createdAt;
         $this->completedAt = $completedAt;
+        $this->type = HabitCompletionType::Success;
     }
 
     public function getId(): Ulid
@@ -89,6 +96,30 @@ class HabitCompletion
     public function setTotalPoints(int $totalPoints): self
     {
         $this->totalPoints = $totalPoints;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getType(): HabitCompletionType
+    {
+        return $this->type;
+    }
+
+    public function setType(HabitCompletionType $type): self
+    {
+        $this->type = $type;
 
         return $this;
     }

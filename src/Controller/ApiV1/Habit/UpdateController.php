@@ -4,6 +4,8 @@ namespace App\Controller\ApiV1\Habit;
 
 use App\Annotation\Uuid as UuidAnnotation;
 use App\Model\Progress\Entity\Weekday;
+use App\Model\Progress\Repository\HabitRepository;
+use App\Model\Progress\Repository\UserRepository;
 use App\Model\Progress\UseCase\Habit\Update\Command;
 use App\Model\Progress\UseCase\Habit\Update\Handler;
 use App\Security\UserIdentity;
@@ -23,11 +25,15 @@ class UpdateController extends AbstractController
         string  $id,
         Request $request,
         Handler $handler,
+        UserRepository  $userRepository,
+        HabitRepository $habitRepository,
     ): JsonResponse {
         $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
+        $habit = $habitRepository->getByIdAndUser(Ulid::fromString($id), $user);
 
         $command = new Command(
-            id: Ulid::fromString($id),
+            id: $habit->getId(),
             categoryId: Ulid::fromString($data['category_id']),
             title: $data['title'],
             totalPoints: $data['points'],

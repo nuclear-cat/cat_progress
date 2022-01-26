@@ -27,17 +27,18 @@ class CalendarController extends AbstractController
         CalendarService    $calendarService,
         \DateTimeImmutable $date,
     ): JsonResponse {
-        $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
 
+
+        $user = $userRepository->get(Ulid::fromString($this->getUser()->getUserIdentifier()));
         $calendarDates = $calendarService->getCalendarDates($date, $this->getUser()->getTimezone());
 
         $habits = $habitRepository->getForCalendar(
             $user,
             ($calendarDates->getFirstDate())
-                ->setTimezone($this->getUser()->getTimezone())
+//                ->setTimezone($this->getUser()->getTimezone())
                 ->setTime(0, 0, 0),
             ($calendarDates->getLastDate())
-                ->setTimezone($this->getUser()->getTimezone())
+//                ->setTimezone($this->getUser()->getTimezone())
                 ->setTime(23, 59, 59)
         );
 

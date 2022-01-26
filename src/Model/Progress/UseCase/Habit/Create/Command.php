@@ -13,4 +13,5 @@ class Command
     public array $weekdays;
     public Ulid $userId;
     public Ulid $categoryId;
+    public \DateTimeZone $timezone;
 }
