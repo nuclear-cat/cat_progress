@@ -9,6 +9,7 @@ export interface OverviewResponse {
         completions: {
             id: string,
             completedAt: moment.Moment;
+            type: string;
         }[];
     }[];
     activeTasks: {

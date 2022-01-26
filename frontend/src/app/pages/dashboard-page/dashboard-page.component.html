@@ -117,8 +117,12 @@
                                     mat-icon-button
                                     (click)="incompleteHabit(habit.id, completion.id)"
                             >
+                                <mat-icon *ngIf="completion.type === completionType.Success" class="mat-24 hover-icon-switch_on-non-hover">check_circle_outline</mat-icon>
+                                <mat-icon svgIcon="failed" *ngIf="completion.type === completionType.Failed" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
+                                <mat-icon svgIcon="lazy" *ngIf="completion.type === completionType.Lazy" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
+                                <mat-icon svgIcon="partially" *ngIf="completion.type === completionType.Partially" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
+                                <mat-icon svgIcon="alternative" *ngIf="completion.type === completionType.Alternative" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
 
-                                <mat-icon class="mat-24 hover-icon-switch_on-non-hover">check_circle_outline</mat-icon>
                                 <mat-icon
                                         class="mat-24 hover-icon-switch_on-hover"
                                         style="display: none;">

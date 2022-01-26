@@ -75,6 +75,7 @@ export class ApiService {
                             return {
                                 id: completionItem.id,
                                 completedAt: moment(completionItem.completed_at),
+                                type: completionItem.type,
                             };
                         }),
                     };

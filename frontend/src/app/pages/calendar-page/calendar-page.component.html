@@ -14,17 +14,17 @@
             <div
                     class="calendar-cell"
                     *ngFor="let day of week"
-                    [class.active]="day.date.diff(currentDate) === 0"
+                    [class.active]="isDateCurrent(day.date)"
             >
                 <div
-                        [class.active]="day.date.diff(currentDate) === 0"
+                        [class.active]="isDateCurrent(currentDate)"
                         class="calendar-cell-header"
                 >
-                    <ng-container *ngIf="day.date.format('DD MM') !== currentDate.format('DD MM')">
+                    <ng-container *ngIf="!isDateCurrent(day.date)">
                         {{ day.date.format('DD') }}
                     </ng-container>
 
-                    <ng-container *ngIf="day.date.format('DD MM') === currentDate.format('DD MM')">
+                    <ng-container *ngIf="isDateCurrent(day.date)">
                         {{ day.date.format('MMMM DD') }}
                     </ng-container>
                 </div>
@@ -37,17 +37,19 @@
                             [style]="'background-color:' + habit.category.color + '; padding: 5px; margin: 3px; border-radius: 5px;'"
                             *ngFor="let habit of day.habits; let i = index"
                     >
+                        <button
+                                [disabled]="isLoading(habit.id, day.date)"
+                                [class.spinner]="isLoading(habit.id, day.date)"
+                                class="small"
+                                *ngIf="habit.completions.length === 0"
+                                (click)="completeHabit(habit.id, day.date)"
+                                mat-icon-button
+                        >
+                            <mat-icon>radio_button_unchecked</mat-icon>
+                        </button>
+
                         <small>
-                            <button
-                                    [disabled]="isLoading(habit.id, day.date)"
-                                    [class.spinner]="isLoading(habit.id, day.date)"
-                                    class="small"
-                                    *ngIf="habit.completions.length === 0"
-                                    (click)="completeHabit(habit.id, day.date)"
-                                    mat-icon-button
-                            >
-                                <mat-icon>radio_button_unchecked</mat-icon>
-                            </button>
+
 
                             <button
                                     [disabled]="isLoading(habit.id, day.date)"

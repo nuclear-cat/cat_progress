@@ -54,6 +54,7 @@ class OverviewController extends AbstractController
                         return [
                             'id' => $completion->getId()->toRfc4122(),
                             'completed_at' => $completion->getCompletedAt()->format(\DateTimeInterface::RFC3339_EXTENDED),
+                            'type' => $completion->getType()->value,
                         ];
                     }, $habit->getCompletions()),
                 ];

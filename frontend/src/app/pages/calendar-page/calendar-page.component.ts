@@ -73,4 +73,8 @@ export class CalendarPageComponent implements OnInit {
 
     return el !== undefined;
   }
+
+  public isDateCurrent(date: moment.Moment): boolean {
+    return date.format('DD MM') === this.currentDate.format('DD MM');
+  }
 }
