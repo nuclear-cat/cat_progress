@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Model\User\Entity\Email;
 use App\Model\User\Entity\User;
+use Symfony\Component\Uid\Ulid;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -23,6 +24,17 @@ class UserRepository extends ServiceEntityRepository
     public function findByEmail(Email $email): ?User
     {
         return $this->findOneBy(['email' => $email]);
+    }
+
+    /**
+     * @param Ulid[] $ids
+     * @return User[]
+     */
+    public function findByIds(array $ids): array
+    {
+        return $this->findBy(['id' => array_map(function ($id) {
+            return $id->toRfc4122();
+        }, $ids)]);
     }
 
     /**
@@ -55,7 +67,7 @@ class UserRepository extends ServiceEntityRepository
         return $result[0];
     }
 
-    public function get(string $id): User
+    public function get(Ulid $id): User
     {
         $user = $this->find($id);
 

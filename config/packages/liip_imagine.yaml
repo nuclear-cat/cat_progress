@@ -1,0 +1,26 @@
+liip_imagine:
+  driver: gd
+  resolvers:
+    default:
+      web_path: ~
+
+  filter_sets:
+    cache: ~
+    profile_page_avatar:
+      quality: 75
+      filters:
+        thumbnail:
+          size: [ 256, 256 ]
+          mode: outbound
+    nav_avatar:
+      quality: 75
+      filters:
+        thumbnail:
+          size: [ 128, 128 ]
+          mode: outbound
+    task_profile:
+      quality: 75
+      filters:
+        thumbnail:
+          size: [ 54, 54 ]
+          mode: outbound

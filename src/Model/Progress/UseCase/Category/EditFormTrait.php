@@ -2,8 +2,8 @@
 
 namespace App\Model\Progress\UseCase\Category;
 
-use App\Model\Progress\Entity\CategoryColor;
 use App\Model\Progress\UseCase\Category\Update\Command;
+use App\Model\Progress\ValueObject\Color;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -26,8 +26,8 @@ trait EditFormTrait
             ])
             ->add('color', ChoiceType::class, [
                 'attr' => ['maxlength' => 25],
-                'choices' => CategoryColor::cases(),
-                'choice_label' => function(CategoryColor $color) {
+                'choices' => Color::cases(),
+                'choice_label' => function(Color $color) {
                     return ucfirst($color->getName());
                 },
                 'label' => 'Color',

@@ -1,4 +1,7 @@
 parameters:
+  frontend_url: '%env(FRONTEND_BASE_URL)%'
+  avatar_public_dir: '/uploads/avatars'
+  avatar_upload_dir: '%kernel.project_dir%/public%avatar_public_dir%'
 
 services:
   _defaults:
@@ -33,3 +36,15 @@ services:
     tags:
       - { name: kernel.event_listener }
 
+  App\Model\User\Service\ConfirmRequestSender:
+    $frontendUrl: '%frontend_url%'
+
+  App\Model\Progress\Service\InviteSender:
+    $frontendUrl: '%frontend_url%'
+
+  Liip\ImagineBundle\Service\FilterService:
+    alias: 'liip_imagine.service.filter'
+
+  App\Model\User\UseCase\ChangeAvatar\Handler:
+    $publicDir: '%avatar_public_dir%'
+    $uploadDir: '%avatar_upload_dir%'

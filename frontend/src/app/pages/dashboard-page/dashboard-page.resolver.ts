@@ -9,7 +9,6 @@ import {OverviewResponse} from "../../api/response/overview-response";
     providedIn: 'root'
 })
 export class DashboardPageResolver implements Resolve<OverviewResponse> {
-
     public constructor(
         private apiService: ApiService,
     ) {

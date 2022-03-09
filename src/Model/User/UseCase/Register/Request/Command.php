@@ -8,4 +8,5 @@ class Command
     public string $name;
     public string $password;
     public string $timezone;
+    public ?string $target = null;
 }

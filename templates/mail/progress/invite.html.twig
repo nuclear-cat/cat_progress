@@ -1,0 +1,8 @@
+{% extends 'mail/base.html.twig' %}
+{% block body %}
+    <p>You are invited to the project «{{ invite.project.title }}».</p>
+    <p>To confirm invitation follow the link:</p>
+    <p>
+        <a href="{{ invite_url }}">Confirm invitation</a>
+    </p>
+{% endblock %}

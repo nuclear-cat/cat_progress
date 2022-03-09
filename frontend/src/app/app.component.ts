@@ -10,6 +10,8 @@ import {DomSanitizer} from "@angular/platform-browser";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+  public isLoading: boolean = true;
+
   constructor(
       private authService: AuthService,
       private updates: SwUpdate,
@@ -47,5 +49,9 @@ export class AppComponent implements OnInit {
     if (refreshToken !== null) {
       this.authService.setRefreshToken(refreshToken);
     }
+  }
+
+  public onActivate($event: any) {
+    this.isLoading = false;
   }
 }

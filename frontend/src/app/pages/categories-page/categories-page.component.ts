@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../api/api.service";
 import {CategoriesResponse} from "../../api/response/categories-response";
-import {CategoryColorsResponse} from "../../api/response/category-colors-response";
+import {ColorsResponse} from "../../api/response/colors-response";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
@@ -22,20 +22,19 @@ export class CategoriesPageComponent implements OnInit {
   }
 
   public ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.categoriesResponse = data['categories'];
-    });
+      this.route.data.subscribe(data => {
+          this.categoriesResponse = data['categories'];
+      });
 
-    this.apiService.getCategoryColors().subscribe({
-      next: (next: CategoryColorsResponse) => {
-        this.colors = next.colors;
-      }
-    });
+      this.apiService.getColors().subscribe({
+          next: (next: ColorsResponse) => {
+              this.colors = next.colors;
+          }
+      });
   }
 
   public deleteCategory(id: string): void {
     this.apiService.deleteCategory(id).subscribe();
-
     this.categoriesResponse.categories = this.categoriesResponse.categories.filter(item => item.id !== id);
   }
 

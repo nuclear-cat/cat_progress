@@ -1,3 +1,5 @@
+<app-nav-title>Edit category</app-nav-title>
+
 <div class="container">
     <h3>{{ title }}</h3>
 
@@ -30,7 +32,7 @@
                         <mat-icon [style]="'color: ' + color">radio_button_checked</mat-icon>
                     </button>
 
-                    <button  *ngIf="color !== selectedColor" (click)="selectColor(color)" type="button" mat-icon-button>
+                    <button (click)="selectColor(color)" *ngIf="color !== selectedColor" mat-icon-button type="button">
                         <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>
                     </button>
                 </ng-container>

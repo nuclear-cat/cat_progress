@@ -3,19 +3,15 @@
 namespace App\DataFixtures\Progress;
 
 use App\Model\Progress\Entity\Category;
-use App\Model\Progress\Entity\CategoryColor;
 use App\Model\Progress\Entity\Habit;
 use App\Model\Progress\Entity\HabitWeekday;
 use App\Model\Progress\Entity\User;
 use App\Model\Progress\Entity\Weekday;
+use App\Model\Progress\ValueObject\Color;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Faker\Factory;
-use Faker\Generator;
 use Symfony\Component\Uid\Ulid;
-use App\Model\User\Entity\Email;
-use App\Model\User\Service\PasswordHasher;
 
 class HabitFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -30,7 +26,7 @@ class HabitFixtures extends Fixture implements DependentFixtureInterface
         $items = [
             [
                 'title' => 'Sport',
-                'color' => CategoryColor::Red,
+                'color' => Color::Red,
                 'habits' => [
                     ['title' => 'Do abs workout - 3 sets', 'weekdays' => [ Weekday::Monday ]],
                     ['title' => 'Go to pilates', 'weekdays' => [ Weekday::Tuesday, Weekday::Thursday ] ],
@@ -38,7 +34,7 @@ class HabitFixtures extends Fixture implements DependentFixtureInterface
                 ],
             ], [
                 'title' => 'English',
-                'color' => CategoryColor::Blue,
+                'color' => Color::Blue,
                 'habits' => [
                     ['title' => 'Memorize the words in Puzzle English - 10 minutes', 'weekdays' => [ Weekday::Friday, ], ],
                     ['title' => 'Читай книгу по английскому 10 минут', 'weekdays' => [], ],

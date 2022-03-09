@@ -1,0 +1,89 @@
+<div
+        style="display: flex; margin-bottom: 15px; margin-top: 15px;"
+>
+    <div style="display: flex; align-content: center; flex-wrap: wrap; margin-right: 10px;">
+        <button
+                (click)="$event.stopPropagation(); completeClick(id)"
+                class="hover-icon-switch"
+                mat-icon-button
+        >
+            <mat-icon class="mat-24 hover-icon-switch_on-non-hover">radio_button_unchecked</mat-icon>
+            <mat-icon
+                    class="mat-24 hover-icon-switch_on-hover"
+                    style="display: none;">
+                check_circle_outline
+            </mat-icon>
+        </button>
+    </div>
+
+    <div style=" width: 100%;">
+        <div
+                style="font-size: 16px; margin-bottom: 6px;"
+        >
+            <div
+                    *ngIf="isEdit"
+                    style="outline: 1px solid #c7c7c7;"
+            >
+                    <textarea
+                            #editTitleField
+                            (keydown)="saveTitle($event)"
+                            [(ngModel)]="editableTitle"
+                            matInput
+                            cdkTextareaAutosize
+                            #autosize="cdkTextareaAutosize"
+                            cdkAutosizeMinRows="1"
+                            cdkAutosizeMaxRows="10"
+                    >{{ title }}</textarea>
+            </div>
+            <div
+                    style="cursor: pointer"
+                    (dblclick)="editStart()"
+                    *ngIf="!isEdit"
+            >{{ title }}</div>
+        </div>
+        <div *ngIf="description"
+             style="font-size: 14px; margin-bottom: 6px;"
+        >{{ description }}</div>
+        <div style="font-size: 12px; margin-bottom: 6px;">
+            <div style="display: flex;">
+                <img
+                        *ngIf="avatarSrc"
+                        alt="Avatar"
+                        matTooltip="{{ creatorName }}"
+                        src="{{ avatarSrc }}"
+                        style="border-radius: 100%; margin-right: 5px;"
+                        width="18px"
+                />
+                <mat-icon
+                        *ngIf="!avatarSrc"
+                        matTooltip="{{ creatorName }}"
+                        style="width: 18px; height: 18px; font-size: 18px;"
+                >person
+                </mat-icon>
+                <div style="display: flex; align-items: center;">{{ createdAt.format('DD.MM.YYYY') }}</div>
+                <div
+                        *ngIf="projectTitle"
+                        [style]="'display: flex; align-items: center; background-color: ' + projectColor + '; border-radius: 4px; margin-left: 3px; padding: 0 5px;'"
+                >{{ projectTitle }}</div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-left: auto;">
+        <button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
+                aria-label="Example icon-button with a menu"
+                mat-icon-button>
+            <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu">
+            <button (click)="openTaskDialogClick(id)" mat-menu-item>
+                <mat-icon>edit</mat-icon>
+                <span>Edit</span>
+            </button>
+            <mat-divider></mat-divider>
+            <button (click)="deleteClick(id)" mat-menu-item>
+                <mat-icon>delete</mat-icon>
+                <span>Delete</span>
+            </button>
+        </mat-menu>
+    </div>
+</div>

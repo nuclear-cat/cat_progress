@@ -2,6 +2,7 @@
 
 namespace App\Model\User\UseCase\ChangeEmail\Request;
 
+use Symfony\Component\Uid\Ulid;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -16,5 +17,5 @@ class Command
      */
     public string $email;
 
-    public int $userId;
+    public Ulid $userId;
 }

@@ -1,0 +1,10 @@
+<div *ngIf="isLoading">
+    <mat-progress-bar color="accent" mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div *ngIf="isSuccess" class="container">
+    <h3 style="text-align: center;">Registration completed</h3>
+    <p style="text-align: center;">
+        <a href="#" routerLink="/login">Go to login page</a>
+    </p>
+</div>

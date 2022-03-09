@@ -40,7 +40,6 @@ class HabitCompletionTypeType extends StringType
 
     public function getName(): string
     {
-
         return self::TYPE;
     }
 }

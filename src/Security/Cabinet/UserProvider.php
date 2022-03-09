@@ -25,6 +25,8 @@ class UserProvider implements UserProviderInterface
 
     public function loadUserByUsername(string $username)
     {
+        die;
+
         dump($username); die;
     }
 
@@ -35,6 +37,7 @@ class UserProvider implements UserProviderInterface
 
     public function loadUserByIdentifier(string $identifier): UserInterface
     {
+        die;
         // TODO: Implement loadUserByIdentifier() method.
     }
 }

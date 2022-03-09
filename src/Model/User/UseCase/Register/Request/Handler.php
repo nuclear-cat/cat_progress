@@ -48,12 +48,12 @@ class Handler
 
         $confirmRequest = new ConfirmRequest($token, $user);
 
+        $this->tokenSender->send($user->getId(), $email, $confirmRequest, $command->target);
+
         $this->userRepository->add($user);
         $this->confirmRequestRepository->add($confirmRequest);
         $this->entityManager->flush();
         $this->dispatcher->dispatch(new UserCreatedEvent($user->getId(), $user->getName()));
-
-        $this->tokenSender->send($user->getId(), $email, $confirmRequest);
 
         return $id;
     }

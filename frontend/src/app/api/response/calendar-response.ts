@@ -11,6 +11,7 @@ export interface CalendarResponse {
             completions: {
                 id: string;
                 completedAt: moment.Moment;
+                type: string;
             }[];
             category: {
                 id: string;

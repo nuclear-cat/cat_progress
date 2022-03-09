@@ -16,6 +16,7 @@ use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\Credentials\CustomCredentials;
 use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
+use Symfony\Component\Uid\Ulid;
 
 class AccessTokenAuthenticator extends AbstractAuthenticator
 {
@@ -27,7 +28,7 @@ class AccessTokenAuthenticator extends AbstractAuthenticator
 
     public function supports(Request $request): ?bool
     {
-        return $request->headers->has('authorization');
+        return $request->headers->has('authorization') && preg_match('/^Bearer/', $request->headers->get('authorization'));
     }
 
     public function authenticate(Request $request): Passport
@@ -42,7 +43,7 @@ class AccessTokenAuthenticator extends AbstractAuthenticator
             throw new AuthenticationFailException($exception->getMessage(), $exception->getReason());
         }
 
-        $user = $this->userRepository->get($claims['user_id']);
+        $user = $this->userRepository->get(Ulid::fromString($claims['user_id']));
 
         return new Passport(
             new UserBadge($user->getId()->toRfc4122(), function () use ($user): ?UserIdentity {

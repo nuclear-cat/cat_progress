@@ -2,6 +2,7 @@
 
 namespace App\Model\Progress\Entity;
 
+use App\Model\Progress\Entity\Project\Project;
 use App\Model\Progress\Repository\TaskRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Uid\Ulid;
@@ -36,6 +37,10 @@ class Task
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false)]
     private User $user;
+
+    #[ORM\ManyToOne(targetEntity: Project::class, inversedBy: 'tasks')]
+    #[ORM\JoinColumn(name: 'project_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    private ?Project $project = null;
 
     public function __construct(
         Ulid $id,
@@ -126,5 +131,17 @@ class Task
     public function getUser(): User
     {
         return $this->user;
+    }
+
+    public function getProject(): ?Project
+    {
+        return $this->project;
+    }
+
+    public function setProject(?Project $project): self
+    {
+        $this->project = $project;
+
+        return $this;
     }
 }

@@ -6,25 +6,28 @@ import {ApiService} from "../api/api.service";
 import {AuthResponse} from "../api/response/auth-response";
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class AuthService {
 
-  private accessToken: string | null = null;
-  private refreshToken: string | null = null;
+    private accessToken: string | null = null;
+    private refreshToken: string | null = null;
 
-  constructor(private httpClient: HttpClient, private apiService: ApiService,) {
-  }
+    public constructor(
+        private httpClient: HttpClient,
+        private apiService: ApiService,
+    ) {
+    }
 
-  public refresh(): Observable<AuthResponse> {
-    return this.apiService.refresh(this.refreshToken as string)
-        .pipe(
-            tap((response: AuthResponse) => {
-                  localStorage.setItem('access-token', response.access_token);
-                  localStorage.setItem('refresh-token', response.refresh_token);
+    public refresh(): Observable<AuthResponse> {
+        return this.apiService.refresh(this.refreshToken as string)
+            .pipe(
+                tap((response: AuthResponse) => {
+                    localStorage.setItem('access-token', response.access_token);
+                    localStorage.setItem('refresh-token', response.refresh_token);
 
-                  this.setAccessToken(response.access_token);
-                  this.setRefreshToken(response.refresh_token);
+                    this.setAccessToken(response.access_token);
+                    this.setRefreshToken(response.refresh_token);
                 }
             ),
         );

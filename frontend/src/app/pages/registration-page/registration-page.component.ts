@@ -35,12 +35,14 @@ export class RegistrationPageComponent implements OnInit {
     const email = this.registrationForm.get('email')?.value;
     const password = this.registrationForm.get('password')?.value;
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const target = localStorage.getItem('target');
 
     this.apiService.register({
       name: name,
       email: email,
       password: password,
       timezone: timezone,
+      target: target,
     }).subscribe({
       complete: () => {
       },

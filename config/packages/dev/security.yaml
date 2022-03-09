@@ -1,0 +1,14 @@
+security:
+  providers:
+    users_in_memory: { memory: null }
+    cabinet_user_provider:
+      id: App\Security\Cabinet\UserProvider
+  encoders:
+    App\Security\UserIdentity: native
+  firewalls:
+    api:
+      anonymous: false
+      pattern: ^/api/v1
+      stateless: true
+      custom_authenticators:
+        - App\Security\Api\BasicAuthenticator

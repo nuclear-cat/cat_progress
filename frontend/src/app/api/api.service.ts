@@ -11,12 +11,19 @@ import {HabitsResponse} from "./response/habits-response";
 import {CategoriesResponse} from "./response/categories-response";
 import {UpdateHabitRequest} from "./request/update-habit-request";
 import {HabitResponse} from "./response/habit-response";
-import {CategoryColorsResponse} from "./response/category-colors-response";
+import {ColorsResponse} from "./response/colors-response";
 import {UpdateCategoryRequest} from "./request/update-category-request";
 import {CategoryResponse} from "./response/category-response";
 import {AuthResponse} from "./response/auth-response";
 import {RegisterRequest} from "./request/register-request";
 import {CompleteHabitRequest} from "./request/complete-habit-request";
+import {ProjectsResponse} from "./response/projects-response";
+import {ProjectResponse} from "./response/project-response";
+import {UpdateProjectRequest} from "./request/update-project-request";
+import {ProjectPermissionsResponse} from "./response/project-permissions-response";
+import {InviteRequest} from "./request/invite-request";
+import {ProfileResponse} from "./response/profile-response";
+import {UpdateProfileRequest} from "./request/update-profile-request";
 
 @Injectable({
     providedIn: 'root'
@@ -41,22 +48,51 @@ export class ApiService {
         });
     }
 
-    public getOverview(habitsDate: moment.Moment): Observable<OverviewResponse> {
+    public getOverview(habitsDate: moment.Moment, taskProjectId: string | null = null): Observable<OverviewResponse> {
         return this.httpClient.get<{
             success: boolean,
-            active_tasks: [{ id: string, title: string, description: string | null }],
-            completed_tasks: [{ id: string, title: string, description: string | null }],
-            today_habits: [{ id: string, title: string, description: string | null, completions: any[] }],
+            projects: [{ id: string, title: string, description: string | null, color: string, }],
+            active_tasks: [{
+                id: string,
+                title: string,
+                description: string | null,
+                project: any | null,
+                created_at: string,
+                creator: any,
+            }],
+            completed_tasks: [{ id: string, title: string, description: string | null, }],
+            today_habits: [{ id: string, title: string, description: string | null, completions: any[], projects: any[], }],
         }>(environment.apiBaseUrl + '/api/v1/overview?habits_date='
             + encodeURIComponent(habitsDate.format('YYYY-MM-DD HH:mm:ss.sssZ'))
+            + '&task_project_id=' + (taskProjectId ? taskProjectId : ''),
         ).pipe(map(response => {
             return {
                 success: response.success,
+                projects: response.projects.map(item => {
+                    return {
+                        id: item.id,
+                        title: item.title,
+                        description: item.description,
+                        color: item.color,
+                    };
+                }),
                 activeTasks: response.active_tasks.map(item => {
                     return {
                         id: item.id,
                         title: item.title,
                         description: item.description,
+                        project: item.project ? {
+                            id: item.project.id,
+                            title: item.project.title,
+                            description: item.project.description,
+                            color: item.project.color,
+                        } : null,
+                        createdAt: moment(item.created_at),
+                        creator: {
+                            id: item.creator.id,
+                            name: item.creator.name,
+                            avatarSrc: item.creator.avatar_src,
+                        },
                     };
                 }),
                 completedTasks: response.completed_tasks.map(item => {
@@ -96,6 +132,7 @@ export class ApiService {
                     completions: {
                         id: string,
                         completed_at: moment.Moment,
+                        type: string,
                     }[],
                     category: {
                         id: string,
@@ -120,6 +157,7 @@ export class ApiService {
                                         return {
                                             id: completionItem.id,
                                             completedAt: completionItem.completed_at,
+                                            type: completionItem.type,
                                         };
                                     }),
                                     category: {
@@ -145,11 +183,19 @@ export class ApiService {
     }
 
     public updateTask(id: string, request: UpdateTaskRequest): Observable<{ success: boolean }> {
-        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/task/' + id + '/update', request, {});
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/task/' + id + '/update', {
+            title: request.title,
+            description: request.description,
+            project_id: request.projectId,
+        }, {});
     }
 
     public createTask(request: UpdateTaskRequest): Observable<{ success: boolean }> {
-        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/task/create', request, {});
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/task/create', {
+            title: request.title,
+            description: request.description,
+            project_id: request.projectId,
+        }, {});
     }
 
     public deleteTask(id: string): Observable<{ success: boolean }> {
@@ -169,6 +215,10 @@ export class ApiService {
 
     public getCategories(): Observable<CategoriesResponse> {
         return this.httpClient.get<any>(environment.apiBaseUrl + '/api/v1/category/list');
+    }
+
+    public getProjects(): Observable<ProjectsResponse> {
+        return this.httpClient.get<any>(environment.apiBaseUrl + '/api/v1/project/list');
     }
 
     public createHabit(request: UpdateHabitRequest): Observable<any> {
@@ -199,12 +249,24 @@ export class ApiService {
         return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/habit/' + id + '/delete', {});
     }
 
-    public getCategoryColors() {
-        return this.httpClient.get<CategoryColorsResponse>(environment.apiBaseUrl + '/api/v1/category/color/list');
+    public getColors(): Observable<ColorsResponse> {
+        return this.httpClient.get<ColorsResponse>(environment.apiBaseUrl + '/api/v1/color/list');
+    }
+
+    public getAllowedProjectPermissions(): Observable<ProjectPermissionsResponse> {
+        return this.httpClient.get<ProjectPermissionsResponse>(environment.apiBaseUrl + '/api/v1/project/allowed_permissions');
     }
 
     public createCategory(request: UpdateCategoryRequest): Observable<{ success: boolean, id: string }> {
         return this.httpClient.post<{ success: boolean, id: string }>(environment.apiBaseUrl + '/api/v1/category/create', {
+            title: request.title,
+            description: request.description,
+            color: request.color,
+        }, {});
+    }
+
+    public createProject(request: UpdateProjectRequest): Observable<{ success: boolean, id: string }> {
+        return this.httpClient.post<{ success: boolean, id: string }>(environment.apiBaseUrl + '/api/v1/project/create', {
             title: request.title,
             description: request.description,
             color: request.color,
@@ -219,8 +281,22 @@ export class ApiService {
         }, {});
     }
 
+    public updateProject(id: string, request: UpdateProjectRequest): Observable<any> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/project/' + id + '/update', {
+            title: request.title,
+            description: request.description,
+            color: request.color,
+        }, {});
+    }
+
     public changeCategoryColor(id: string, color: string): Observable<any> {
         return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/category/' + id + '/change_color', {
+            color: color,
+        }, {});
+    }
+
+    public changeProjectColor(id: string, color: string): Observable<any> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/project/' + id + '/change_color', {
             color: color,
         }, {});
     }
@@ -229,8 +305,16 @@ export class ApiService {
         return this.httpClient.get<CategoryResponse>(environment.apiBaseUrl + '/api/v1/category/' + id);
     }
 
+    public getProject(id: string): Observable<ProjectResponse> {
+        return this.httpClient.get<ProjectResponse>(environment.apiBaseUrl + '/api/v1/project/' + id);
+    }
+
     public deleteCategory(id: string): Observable<{ success: boolean }> {
         return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/category/' + id + '/delete', {});
+    }
+
+    public deleteProject(id: string): Observable<{ success: boolean }> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/project/' + id + '/delete', {});
     }
 
     public completeHabit(id: string, request: CompleteHabitRequest): Observable<{ success: boolean }> {
@@ -252,6 +336,67 @@ export class ApiService {
             email: request.email,
             password: request.password,
             timezone: request.timezone,
+            target: request.target,
+        }, {});
+    }
+
+    public confirmRegistration(requestId: string, requestToken: string): Observable<{ success: boolean }> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/register/confirm', {
+            id: requestId,
+            token: requestToken,
+        });
+    }
+
+    public createInvite(projectId: string, request: InviteRequest): Observable<{ success: boolean }> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/project/' + projectId + '/invite/create', {
+            email: request.email,
+            permissions: request.permissions,
+        }, {});
+    }
+
+    public confirmInvite(projectId: string, inviteId: string, inviteToken: string): Observable<{ success: boolean }> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/project/' + projectId + '/invite/' + inviteId + '/confirm', {
+            token: inviteToken,
+        }, {});
+    }
+
+    public getProfile(): Observable<ProfileResponse> {
+        return this.httpClient.get<{
+            success: boolean,
+            profile: {
+                id: string;
+                name: string;
+                email: string;
+                avatar_src: string | null;
+            },
+        }>(environment.apiBaseUrl + '/api/v1/profile').pipe(map(response => {
+            return {
+                success: response.success,
+                profile: {
+                    id: response.profile.id,
+                    name: response.profile.name,
+                    email: response.profile.email,
+                    avatarSrc: response.profile.avatar_src,
+                },
+            };
+        }));
+    }
+
+    public changeProfileAvatar(formData: FormData): Observable<{ success: boolean, avatarSrc: string }> {
+        return this.httpClient.post<{
+            success: boolean,
+            avatar_src: string,
+        }>(environment.apiBaseUrl + '/api/v1/profile/change_avatar', formData).pipe(map(response => {
+            return {
+                success: response.success,
+                avatarSrc: response.avatar_src,
+            };
+        }));
+    }
+
+    public updateProfile(request: UpdateProfileRequest): Observable<{ success: boolean }> {
+        return this.httpClient.post<{ success: boolean }>(environment.apiBaseUrl + '/api/v1/profile/update', {
+            name: request.name,
         }, {});
     }
 }

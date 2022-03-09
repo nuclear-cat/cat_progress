@@ -4,61 +4,54 @@ import {filter, mapTo, merge, Observable} from 'rxjs';
 import {map, shareReplay} from 'rxjs/operators';
 import {AuthService} from "../services/auth.service";
 import {ResolveEnd, ResolveStart, Router} from "@angular/router";
+import {TemplatePortal} from "@angular/cdk/portal";
+import {ApiService} from "../api/api.service";
+import {ProfileService} from "../services/profile.service";
 
 @Component({
-  selector: 'app-nav',
-  templateUrl: './nav.component.html',
-  styleUrls: ['./nav.component.scss']
+    selector: 'app-nav',
+    templateUrl: './nav.component.html',
+    styleUrls: ['./nav.component.scss']
 })
 export class NavComponent implements OnInit {
-  public isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
-      .pipe(
-          map(result => result.matches),
+    public isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
+        .pipe(
+            map(result => result.matches),
           shareReplay()
       );
 
   @ViewChild('item') public item: any;
-  // public isLoading: boolean = true;
   public title = '';
   public isLoading$!: Observable<boolean>;
   private showLoaderEvents$!: Observable<boolean>;
-  private hideLoaderEvents$!: Observable<boolean>;
+    public portal$!: Observable<TemplatePortal>;
+    private hideLoaderEvents$!: Observable<boolean>;
 
   constructor(
       private breakpointObserver: BreakpointObserver,
       public authService: AuthService,
       private router: Router,
+      private apiService: ApiService,
+      public profileService: ProfileService,
   ) {
   }
 
   public logout(): void {
     this.authService.logout();
-
     this.router.navigate(['/login']);
   }
 
-  //
-  // public ngAfterViewInit(): void {
-  //   // if (this.item) {
-  //   //   this.isLoading = false;
-  //   // }
-  // }
+    public ngOnInit(): void {
+        this.showLoaderEvents$ = this.router.events.pipe(
+            filter(e => e instanceof ResolveStart),
+            mapTo(true),
+        );
 
-  public pageAdded($event: any) {
-    this.title = $event.title;
-  }
+        this.hideLoaderEvents$ = this.router.events.pipe(
+            filter(e => e instanceof ResolveEnd),
+            mapTo(false),
+        );
 
-  ngOnInit(): void {
-    this.showLoaderEvents$ = this.router.events.pipe(
-        filter(e => e instanceof ResolveStart),
-        mapTo(true),
-    );
-
-    this.hideLoaderEvents$ = this.router.events.pipe(
-        filter(e => e instanceof ResolveEnd),
-        mapTo(false),
-    );
-
-    this.isLoading$ = merge(this.hideLoaderEvents$, this.showLoaderEvents$);
+        this.isLoading$ = merge(this.hideLoaderEvents$, this.showLoaderEvents$);
   }
 }

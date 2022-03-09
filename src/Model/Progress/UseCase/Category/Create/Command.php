@@ -2,7 +2,7 @@
 
 namespace App\Model\Progress\UseCase\Category\Create;
 
-use App\Model\Progress\Entity\CategoryColor;
+use App\Model\Progress\ValueObject\Color;
 use Symfony\Component\Uid\Ulid;
 
 class Command
@@ -10,5 +10,5 @@ class Command
     public string $title;
     public ?string $description;
     public Ulid $userId;
-    public CategoryColor $color;
+    public Color $color;
 }

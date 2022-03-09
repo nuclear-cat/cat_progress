@@ -2,6 +2,12 @@ import * as moment from "moment";
 
 export interface OverviewResponse {
     success: boolean;
+    projects: {
+        id: string;
+        title: string;
+        description: string | null;
+        color: string;
+    }[];
     habits: {
         id: string;
         title: string;
@@ -16,6 +22,18 @@ export interface OverviewResponse {
         id: string;
         title: string;
         description: string | null;
+        createdAt: moment.Moment;
+        project: {
+            id: string,
+            title: string,
+            description: string | null,
+            color: string | null,
+        } | null;
+        creator: {
+            id: string,
+            name: string,
+            avatarSrc: string,
+        },
     }[];
     completedTasks: {
         id: string;

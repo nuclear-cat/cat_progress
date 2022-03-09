@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import * as moment from "moment";
 import {Moment} from "moment";
 import {CalendarResponse} from "../../api/response/calendar-response";
@@ -6,47 +6,52 @@ import {ApiService} from "../../api/api.service";
 import {ActivatedRoute} from "@angular/router";
 import {Weekday} from "../../enums/weekday";
 import {HabitCompletionType} from "../../enums/habit-completion-type";
+import {CdkPortal} from "@angular/cdk/portal";
 
 @Component({
-  selector: 'app-calendar-page',
-  templateUrl: './calendar-page.component.html',
-  styleUrls: ['./calendar-page.component.scss'],
+    selector: 'app-calendar-page',
+    templateUrl: './calendar-page.component.html',
+    styleUrls: ['./calendar-page.component.scss'],
 })
 export class CalendarPageComponent implements OnInit {
-  public currentDate: Moment = moment().startOf('day');
-  public selectedMonth: Moment = moment().startOf('month');
-  public calendar!: CalendarResponse;
-  public weekdays: string[] = Object.keys(Weekday);
+    public currentDate: Moment = moment().startOf('day');
+    public selectedMonth: Moment = moment().startOf('month');
+    public calendar!: CalendarResponse;
+    public weekdays: string[] = Object.keys(Weekday);
+    public completionType = HabitCompletionType;
 
-  public loadingHabits: {
-    habitId: string,
-    date: moment.Moment,
-  }[] = [];
-  public title: string = 'Calendar';
+    @ViewChild(CdkPortal)
+    public portalContent!: CdkPortal;
 
-  public constructor(
-      private apiService: ApiService,
-      public route: ActivatedRoute,
-  ) {
-  }
+    public loadingHabits: {
+        habitId: string,
+        date: moment.Moment,
+    }[] = [];
+    public title: string = 'Calendar';
 
-  public ngOnInit(): void {
-    this.route.data.subscribe(data => {
-      this.calendar = data['calendar'];
-    });
-  }
+    public constructor(
+        private apiService: ApiService,
+        public route: ActivatedRoute,
+    ) {
+    }
 
-  public completeHabit(habitId: string, date: moment.Moment): void {
-    this.loadingHabits.push({habitId: habitId, date: date,});
+    public ngOnInit(): void {
+        this.route.data.subscribe(data => {
+            this.calendar = data['calendar'];
+        });
+    }
 
-    this.apiService.completeHabit(habitId, {
-      date: date,
-      completionType: HabitCompletionType.Success,
-    }).subscribe({
-      next: () => {
-        this.apiService.getCalendar(this.selectedMonth).subscribe((next: CalendarResponse) => {
-          this.calendar = next;
-          this.loadingHabits = this.loadingHabits.filter(item => {
+    public completeHabit(habitId: string, date: moment.Moment): void {
+        this.loadingHabits.push({habitId: habitId, date: date,});
+
+        this.apiService.completeHabit(habitId, {
+            date: date,
+            completionType: HabitCompletionType.Success,
+        }).subscribe({
+            next: () => {
+                this.apiService.getCalendar(this.selectedMonth).subscribe((next: CalendarResponse) => {
+                    this.calendar = next;
+                    this.loadingHabits = this.loadingHabits.filter(item => {
             return item.habitId !== habitId && item.date != date;
           });
         });

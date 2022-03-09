@@ -1,0 +1,27 @@
+<div *ngIf="form" class="container">
+    <mat-card style="margin-bottom: 10px">
+        <form (ngSubmit)="submitForm()" [formGroup]="form" novalidate>
+            <div>
+                <mat-form-field appearance="outline" class="full-width-field">
+                    <mat-label>E-Mail</mat-label>
+                    <input formControlName="email" matInput placeholder="Email">
+                </mat-form-field>
+            </div>
+
+            <div>
+                <ng-container formArrayName="permissions">
+                    <div *ngFor="let permission of permissionsResponse.permissions; let i = index">
+                        <mat-checkbox
+                                [formControlName]="i"
+                                [value]="permission.value"
+                        >{{permission.title}}</mat-checkbox>
+                    </div>
+                </ng-container>
+            </div>
+            <br/>
+            <div class="button-wrapper">
+                <button [disabled]="form.invalid || form.disabled" color="primary" mat-flat-button>Invite</button>
+            </div>
+        </form>
+    </mat-card>
+</div>

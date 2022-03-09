@@ -2,11 +2,11 @@
 
 namespace App\Controller\ApiV1\Category;
 
-use App\Model\Progress\Entity\CategoryColor;
 use App\Model\Progress\Repository\CategoryRepository;
 use App\Model\Progress\Repository\UserRepository;
 use App\Model\Progress\UseCase\Category\ChangeColor\Command;
 use App\Model\Progress\UseCase\Category\ChangeColor\Handler;
+use App\Model\Progress\ValueObject\Color;
 use App\Security\UserIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -33,7 +33,7 @@ class ChangeColorController extends AbstractController
 
         $command = new Command(
             id: $category->getId(),
-            color: CategoryColor::from($data['color']),
+            color: Color::from($data['color']),
         );
 
         $handler->handle($command);

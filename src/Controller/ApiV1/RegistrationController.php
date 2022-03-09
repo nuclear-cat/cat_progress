@@ -22,6 +22,7 @@ class RegistrationController extends AbstractController
         $command->email = $data['email'];
         $command->password = $data['password'];
         $command->timezone = $data['timezone'];
+        $command->target = $data['target'] ?? null;
 
         $handler->handle($command);
 
@@ -30,10 +31,16 @@ class RegistrationController extends AbstractController
         ]);
     }
 
-    #[Route('/cabinet/register/{id}/{token}/confirm', name: 'api.v1.register.confirm', methods: ['POST'])]
-    public function confirm(string $id, string $token, Register\Confirm\Handler $handler): Response
+    #[Route('/api/v1/register/confirm', name: 'api.v1.register.confirm', methods: ['POST'])]
+    public function confirm(Request $request, Register\Confirm\Handler $handler): Response
     {
-        $command = new Register\Confirm\Command(Ulid::fromString($id), $token);
+        $data = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
+
+        $command = new Register\Confirm\Command(
+            Ulid::fromString($data['id']),
+            $data['token'],
+        );
+
         $handler->handle($command);
 
         return $this->json([

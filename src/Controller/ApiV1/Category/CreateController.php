@@ -2,9 +2,9 @@
 
 namespace App\Controller\ApiV1\Category;
 
-use App\Model\Progress\Entity\CategoryColor;
 use App\Model\Progress\UseCase\Category\Create\Command;
 use App\Model\Progress\UseCase\Category\Create\Handler;
+use App\Model\Progress\ValueObject\Color;
 use App\Security\UserIdentity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -28,7 +28,7 @@ class CreateController extends AbstractController
         $command->title = $data['title'];
         $command->description = $data['description'];
         $command->userId = Ulid::fromString($this->getUser()->getUserIdentifier());
-        $command->color = CategoryColor::from($data['color']);
+        $command->color = Color::from($data['color']);
 
         $id = $handler->handle($command);
 

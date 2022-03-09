@@ -1,0 +1,52 @@
+<app-nav-title>Profile</app-nav-title>
+
+<div *ngIf="profileResponse" class="container">
+    <div>
+        <div>
+            <div>
+                <div style="max-width: 200px;">
+                    <label for="avatar" style="width: 100%; cursor:pointer;">
+
+                        <img
+                                *ngIf="!isImageLoading && profileResponse.profile.avatarSrc"
+                                [style.opacity]="isImageLoading ? '0.2' : '1'"
+                                alt="Avatar image"
+                                src="{{ profileResponse.profile.avatarSrc }}"
+                                style="border-radius: 100%; width: 100%;"
+                        />
+
+                        <mat-icon
+                                *ngIf="!isImageLoading && !profileResponse.profile.avatarSrc"
+                                style="width: 200px; height: 200px; font-size: 200px; color: #aab0d1;"
+                        >photo
+                        </mat-icon>
+                    </label>
+                    <mat-spinner *ngIf="isImageLoading" diameter="200" strokeWidth="1"></mat-spinner>
+                </div>
+                <input (change)="changeAvatar($event)" accept="image/png, image/gif, image/jpeg" id="avatar"
+                       style="display: none;"
+                       type="file"/>
+            </div>
+        </div>
+        <br/>
+        <div>
+            <form (ngSubmit)="submitForm()" [formGroup]="editProfileForm" novalidate>
+                <div>
+                    <mat-form-field appearance="outline" class="full-width-field">
+                        <mat-label>Name</mat-label>
+                        <input formControlName="name" matInput placeholder="Name" type="text">
+                    </mat-form-field>
+                </div>
+
+                <div class="button-wrapper">
+                    <button
+                            [disabled]="editProfileForm.invalid || editProfileForm.disabled"
+                            color="primary"
+                            mat-flat-button
+                    >Update
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

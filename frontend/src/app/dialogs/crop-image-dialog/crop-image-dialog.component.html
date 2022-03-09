@@ -1,0 +1,18 @@
+<mat-dialog-content style="margin-bottom: 10px">
+    <div *ngIf="isLoading" style="width: 100%">
+        <mat-spinner></mat-spinner>
+    </div>
+
+    <image-cropper
+            (imageCropped)="imageCropped($event)"
+            (imageLoaded)="imageLoaded($event)"
+            [aspectRatio]="1"
+            [imageFile]="data.file"
+            [maintainAspectRatio]="true"
+            [roundCropper]="true"
+            format="png"
+    ></image-cropper>
+</mat-dialog-content>
+<div>
+    <button (click)="submit()" color="primary" mat-raised-button>Confirm</button>
+</div>

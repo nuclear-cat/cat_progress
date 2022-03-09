@@ -9,6 +9,7 @@ use App\Model\User\Repository\UserRepository;
 use App\Model\User\Service\ConfirmTokenGenerator;
 use App\Model\User\Service\EmailChangeRequestSender;
 use App\Model\User\Vo\Email;
+use Symfony\Component\Uid\Ulid;
 
 class Handler
 {

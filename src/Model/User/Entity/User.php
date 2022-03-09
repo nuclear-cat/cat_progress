@@ -30,6 +30,9 @@ class User
     #[ORM\Column(name: 'status', type: 'user_status')]
     private Status $status;
 
+    #[ORM\Column(name: 'avatar_image', type: 'string', length: 128, nullable: true)]
+    private ?string $avatarImage = null;
+
     public function __construct(
         Ulid          $id,
         ?Email        $email,
@@ -110,6 +113,25 @@ class User
     public function setPasswordHash(?string $passwordHash): self
     {
         $this->passwordHash = $passwordHash;
+
+        return $this;
+    }
+
+    public function getAvatarImage(): ?string
+    {
+        return $this->avatarImage;
+    }
+
+    public function setAvatarImage(?string $avatarImage): self
+    {
+        $this->avatarImage = $avatarImage;
+
+        return $this;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }

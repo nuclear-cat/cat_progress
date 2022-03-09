@@ -10,5 +10,6 @@ class Command
         public Ulid $taskId,
         public string $title,
         public ?string $description,
+        public ?Ulid $projectId,
     ) {}
 }

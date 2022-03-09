@@ -1,229 +1,265 @@
+<app-nav-title>Dashboard</app-nav-title>
+
 <div class="container">
-    <div *ngIf="overview; else loading">
-        <mat-card>
-            <mat-card-title>Active tasks ({{ overview.activeTasks.length }})</mat-card-title>
-            <div>
-                <div style="margin-bottom: -20px;">
-                    <form [formGroup]="addTaskForm" (ngSubmit)="addTaskSubmit()" novalidate>
-                        <mat-list-item>
-                            <div mat-line>
-                                <mat-form-field appearance="outline" class="full-width-field">
-                                    <mat-label>Add task</mat-label>
-                                    <input matInput placeholder="Add task" formControlName="title">
-                                </mat-form-field>
-                            </div>
-                        </mat-list-item>
-                    </form>
+    <mat-card>
+        <mat-card-title>Active tasks ({{ overview.activeTasks.length }})</mat-card-title>
+        <div>
+            <div style="margin-bottom: -20px;">
+                <form (ngSubmit)="addTaskSubmit()" [formGroup]="addTaskForm" novalidate>
+                    <mat-list-item>
+                        <div mat-line>
+                            <mat-form-field appearance="outline" class="full-width-field">
+                                <mat-label>Add task</mat-label>
+                                <input formControlName="title" matInput placeholder="Add task">
+                            </mat-form-field>
+                        </div>
+                    </mat-list-item>
+                </form>
+            </div>
+        </div>
+
+        <div *ngIf="overview.projects.length > 0">
+            <mat-button-toggle-group name="fontStyle">
+                <mat-button-toggle
+                        (click)="selectProject(null)"
+                        [checked]="selectedProjectId === null"
+                >All
+                </mat-button-toggle>
+                <mat-button-toggle
+                        (click)="selectProject(project.id)"
+                        *ngFor="let project of overview.projects"
+                        [checked]="selectedProjectId === project.id"
+                >{{ project.title }}</mat-button-toggle>
+            </mat-button-toggle-group>
+        </div>
+
+        <br/>
+
+        <mat-card-content>
+            <div *ngIf="overview.activeTasks.length === 0">No tasks</div>
+
+            <div
+                    cdkDropList
+                    (cdkDropListDropped)="resortActiveTasks($event)"
+                    [cdkDropListData]="overview.activeTasks"
+            >
+                <div
+                        class="task-drag-box"
+                        [cdkDragDisabled]="editTasks.indexOf(task.id) !== -1"
+                        style="background-color: #fff"
+                        cdkDrag
+                        *ngFor="let task of overview.activeTasks; last as last; first as first"
+                >
+                    <app-task-item
+                            (onEditStarted)="editTaskStart(task.id)"
+                            (onEditClose)="editTaskClose(task.id)"
+                            (onComplete)="completeTask(task.id)"
+                            (onDelete)="deleteTask(task.id)"
+                            (onOpenTaskDialog)="openTaskDialog(task.id)"
+                            [avatarSrc]="task.creator.avatarSrc"
+                            [createdAt]="task.createdAt"
+                            [creatorName]="task.creator.name"
+                            [description]="task.description"
+                            [id]="task.id"
+                            [projectColor]="task.project ? task.project.color : null"
+                            [projectTitle]="task.project ? task.project.title : null"
+                            [title]="task.title"
+                    ></app-task-item>
+                    <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
                 </div>
             </div>
+        </mat-card-content>
+    </mat-card>
 
-            <mat-card-content>
-                <div *ngIf="overview.activeTasks.length === 0">No tasks</div>
+    <br/>
 
-                <mat-list style="padding-top: 0;">
-                    <mat-list-item
-                            class="mp-list-item"
-                            *ngFor="let task of overview.activeTasks; last as last; first as first">
-                        <div mat-line>
-                            <button
-                                    class="hover-icon-switch"
-                                    mat-icon-button
-                                    (click)="$event.stopPropagation(); completeTask(task.id)"
-                            >
-                                <mat-icon class="mat-24 hover-icon-switch_on-non-hover">radio_button_unchecked
-                                </mat-icon>
-                                <mat-icon
-                                        class="mat-24 hover-icon-switch_on-hover"
-                                        style="display: none;">
-                                    check_circle_outline
-                                </mat-icon>
-                            </button>
-                            <span>{{ task.title }}</span>
-                            <span *ngIf="task.description">, {{ task.description }}</span>
-                        </div>
-                        <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
-                                aria-label="Example icon-button with a menu">
-                            <mat-icon>more_vert</mat-icon>
+    <mat-card>
+        <mat-card-title>Completed tasks</mat-card-title>
+
+        <mat-card-content>
+            <div *ngIf="overview.completedTasks.length === 0">No completed</div>
+
+
+            <!--            <div *ngFor="let task of overview.completedTasks; last as last; first as first">-->
+            <!--                <app-task-item-->
+            <!--                        (onComplete)="completeTask(task.id)"-->
+            <!--                        (onDelete)="deleteTask(task.id)"-->
+            <!--                        (onOpenTaskDialog)="openTaskDialog(task.id)"-->
+            <!--                        [avatarSrc]="task.creator.avatarSrc"-->
+            <!--                        [createdAt]="task.createdAt"-->
+            <!--                        [creatorName]="task.creator.name"-->
+            <!--                        [description]="task.description"-->
+            <!--                        [id]="task.id"-->
+            <!--                        [projectColor]="task.project ? task.project.color : null"-->
+            <!--                        [projectTitle]="task.project ? task.project.title : null"-->
+            <!--                        [title]="task.title"-->
+            <!--                ></app-task-item>-->
+            <!--                <mat-divider *ngIf="!last" [inset]="true"></mat-divider>-->
+            <!--            </div>-->
+
+
+            <mat-list>
+                <mat-list-item
+                        *ngFor="let task of overview.completedTasks; last as last"
+                        class="mp-list-item">
+                    <div mat-line>
+                        <button (click)="$event.stopPropagation(); incompleteTask(task.id)" mat-icon-button>
+                            <mat-icon class="mat-24">check_circle_outline</mat-icon>
                         </button>
-                        <mat-menu #menu="matMenu">
-                            <button (click)="openTaskDialog(task)" mat-menu-item>
-                                <mat-icon>edit</mat-icon>
-                                <span>Edit</span>
-                            </button>
-                            <mat-divider></mat-divider>
-                            <button (click)="deleteTask(task.id)" mat-menu-item>
-                                <mat-icon>delete</mat-icon>
-                                <span>Delete</span>
-                            </button>
-                        </mat-menu>
-                        <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                    </mat-list-item>
-                </mat-list>
-            </mat-card-content>
-        </mat-card>
+                        <span><s>{{ task.title }}</s></span>
+                        <span *ngIf="task.description"><s>, {{ task.description }}</s></span>
 
-        <br/>
-
-        <mat-card>
-            <mat-card-title>
-                <div style="display: flex; justify-content: space-between;">
-                    Habits
-                    <div style="height: 0">
-                        <a
-                                href="#"
-                                (click)="decrementHabitsDay()"
-                                mat-icon-button color="primary"
-                        >
-                            <mat-icon>arrow_left</mat-icon>
-                        </a>
-                        <a
-                                (click)="incrementHabitsDay()"
-                                href="#"
-                                mat-icon-button color="primary"
-                        >
-                            <mat-icon>arrow_right</mat-icon>
-                        </a>
+                        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
                     </div>
+
+                    <button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
+                            aria-label="Example icon-button with a menu"
+                            mat-icon-button>
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button (click)="openTaskDialog(task.id)" mat-menu-item>
+                            <mat-icon>edit</mat-icon>
+                            <span>Edit</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button (click)="deleteTask(task.id)" mat-menu-item>
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                        </button>
+                    </mat-menu>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
+
+    <br/>
+
+    <mat-card>
+        <mat-card-title>
+            <div style="display: flex; justify-content: space-between;">
+                Habits
+                <div style="height: 0">
+                    <a
+                            (click)="decrementHabitsDay()"
+                            color="primary"
+                            href="#" mat-icon-button
+                    >
+                        <mat-icon>arrow_left</mat-icon>
+                    </a>
+                    <a
+                            (click)="incrementHabitsDay()"
+                            color="primary"
+                            href="#" mat-icon-button
+                    >
+                        <mat-icon>arrow_right</mat-icon>
+                    </a>
                 </div>
-            </mat-card-title>
+            </div>
+        </mat-card-title>
 
-            <mat-card-subtitle>{{ habitsDate.format('dddd, DD') }}</mat-card-subtitle>
+        <mat-card-subtitle>{{ habitsDate.format('dddd, DD') }}</mat-card-subtitle>
 
-            <mat-card-content>
-                <div *ngIf="overview.habits.length === 0">No habits</div>
-                <mat-list>
-                    <mat-list-item
-                            class="mp-list-item"
-                            *ngFor="let habit of overview.habits; last as last">
-                        <div mat-line>
-                            <button
-                                    class="hover-icon-switch"
-                                    *ngIf="habit.completions.length === 0"
-                                    mat-icon-button
-                                    (click)="$event.stopPropagation(); completeHabit(habit.id, completionType.Success)"
-                            >
-                                <mat-icon class="mat-24 hover-icon-switch_on-non-hover">radio_button_unchecked
-                                </mat-icon>
-                                <mat-icon
-                                        class="mat-24 hover-icon-switch_on-hover"
-                                        style="display: none;">
-                                    check_circle_outline
-                                </mat-icon>
-                            </button>
-
-                            <button
-                                    class="hover-icon-switch"
-                                    *ngFor="let completion of habit.completions"
-                                    mat-icon-button
-                                    (click)="incompleteHabit(habit.id, completion.id)"
-                            >
-                                <mat-icon *ngIf="completion.type === completionType.Success" class="mat-24 hover-icon-switch_on-non-hover">check_circle_outline</mat-icon>
-                                <mat-icon svgIcon="failed" *ngIf="completion.type === completionType.Failed" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
-                                <mat-icon svgIcon="lazy" *ngIf="completion.type === completionType.Lazy" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
-                                <mat-icon svgIcon="partially" *ngIf="completion.type === completionType.Partially" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
-                                <mat-icon svgIcon="alternative" *ngIf="completion.type === completionType.Alternative" class="mat-24 hover-icon-switch_on-non-hover"></mat-icon>
-
-                                <mat-icon
-                                        class="mat-24 hover-icon-switch_on-hover"
-                                        style="display: none;">
-                                    radio_button_unchecked
-                                </mat-icon>
-                            </button>
-
-                            <span *ngIf="habit.completions.length > 0"><s>{{ habit.title }}</s></span>
-                            <span *ngIf="habit.completions.length === 0">{{ habit.title }}</span>
-
-                            <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                        </div>
+        <mat-card-content>
+            <div *ngIf="overview.habits.length === 0">No habits</div>
+            <mat-list>
+                <mat-list-item
+                        *ngFor="let habit of overview.habits; last as last"
+                        class="mp-list-item">
+                    <div mat-line>
+                        <button
+                                (click)="$event.stopPropagation(); completeHabit(habit.id, completionType.Success)"
+                                *ngIf="habit.completions.length === 0"
+                                class="hover-icon-switch"
+                                mat-icon-button
+                        >
+                            <mat-icon class="mat-24 hover-icon-switch_on-non-hover">radio_button_unchecked
+                            </mat-icon>
+                            <mat-icon
+                                    class="mat-24 hover-icon-switch_on-hover"
+                                    style="display: none;">
+                                check_circle_outline
+                            </mat-icon>
+                        </button>
 
                         <button
+                                (click)="incompleteHabit(habit.id, completion.id)"
+                                *ngFor="let completion of habit.completions"
+                                class="hover-icon-switch"
                                 mat-icon-button
-                                (click)="$event.stopPropagation();"
-                                [matMenuTriggerFor]="menu"
                         >
-                            <mat-icon>more_vert</mat-icon>
+                            <mat-icon *ngIf="completion.type === completionType.Success"
+                                      class="mat-24 hover-icon-switch_on-non-hover">check_circle_outline
+                            </mat-icon>
+                            <mat-icon *ngIf="completion.type === completionType.Failed"
+                                      class="mat-24 hover-icon-switch_on-non-hover"
+                                      svgIcon="failed"></mat-icon>
+                            <mat-icon *ngIf="completion.type === completionType.Lazy"
+                                      class="mat-24 hover-icon-switch_on-non-hover"
+                                      svgIcon="lazy"></mat-icon>
+                            <mat-icon *ngIf="completion.type === completionType.Partially"
+                                      class="mat-24 hover-icon-switch_on-non-hover"
+                                      svgIcon="partially"></mat-icon>
+                            <mat-icon *ngIf="completion.type === completionType.Alternative"
+                                      class="mat-24 hover-icon-switch_on-non-hover"
+                                      svgIcon="alternative"></mat-icon>
+
+                            <mat-icon
+                                    class="mat-24 hover-icon-switch_on-hover"
+                                    style="display: none;">
+                                radio_button_unchecked
+                            </mat-icon>
                         </button>
 
-                        <mat-menu #menu="matMenu">
-                            <button (click)="completeHabit(habit.id, completionType.Success)" mat-menu-item>
-                                <mat-icon>check_circle_outline</mat-icon>
-                                <span>Complete as success</span>
-                            </button>
-                            <button (click)="completeHabit(habit.id, completionType.Partially)" mat-menu-item>
-                                <mat-icon>check_circle_outline</mat-icon>
-                                <span>Complete as partially</span>
-                            </button>
-                            <button (click)="completeHabit(habit.id, completionType.Lazy)" mat-menu-item>
-                                <mat-icon>cancel</mat-icon>
-                                <span>Complete as lazy</span>
-                            </button>
-                            <button (click)="completeHabit(habit.id, completionType.Alternative)" mat-menu-item>
-                                <mat-icon>check_circle_outline</mat-icon>
-                                <span>Complete as alternative</span>
-                            </button>
-                            <button (click)="completeHabit(habit.id, completionType.Failed)" mat-menu-item>
-                                <mat-icon>cancel</mat-icon>
-                                <span>Complete as failed</span>
-                            </button>
-                            <mat-divider></mat-divider>
-                            <button (click)="openTaskDialog(habit)" mat-menu-item>
-                                <mat-icon>edit</mat-icon>
-                                <span>Edit</span>
-                            </button>
-                            <mat-divider></mat-divider>
-                            <button (click)="deleteTask(habit.id)" mat-menu-item>
-                                <mat-icon>delete</mat-icon>
-                                <span>Delete</span>
-                            </button>
-                        </mat-menu>
+                        <span *ngIf="habit.completions.length > 0"><s>{{ habit.title }}</s></span>
+                        <span *ngIf="habit.completions.length === 0">{{ habit.title }}</span>
 
-                    </mat-list-item>
-                </mat-list>
-            </mat-card-content>
-        </mat-card>
+                        <mat-divider *ngIf="!last" [inset]="true"></mat-divider>
+                    </div>
 
-        <br/>
+                    <button
+                            (click)="$event.stopPropagation();"
+                            [matMenuTriggerFor]="menu"
+                            mat-icon-button
+                    >
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
 
-        <mat-card>
-            <mat-card-title>Completed tasks</mat-card-title>
-
-            <mat-card-content>
-                <div *ngIf="overview.completedTasks.length === 0">No completed</div>
-                <mat-list>
-                    <mat-list-item
-                            class="mp-list-item"
-                            *ngFor="let task of overview.completedTasks; last as last">
-                        <div mat-line>
-                            <button mat-icon-button (click)="$event.stopPropagation(); incompleteTask(task.id)">
-                                <mat-icon class="mat-24">check_circle_outline</mat-icon>
-                            </button>
-                            <span><s>{{ task.title }}</s></span>
-                            <span *ngIf="task.description"><s>, {{ task.description }}</s></span>
-
-                            <mat-divider [inset]="true" *ngIf="!last"></mat-divider>
-                        </div>
-
-                        <button mat-icon-button (click)="$event.stopPropagation();" [matMenuTriggerFor]="menu"
-                                aria-label="Example icon-button with a menu">
-                            <mat-icon>more_vert</mat-icon>
+                    <mat-menu #menu="matMenu">
+                        <button (click)="completeHabit(habit.id, completionType.Success)" mat-menu-item>
+                            <mat-icon>check_circle_outline</mat-icon>
+                            <span>Complete as success</span>
                         </button>
-                        <mat-menu #menu="matMenu">
-                            <button (click)="openTaskDialog(task)" mat-menu-item>
-                                <mat-icon>edit</mat-icon>
-                                <span>Edit</span>
-                            </button>
-                            <mat-divider></mat-divider>
-                            <button (click)="deleteTask(task.id)" mat-menu-item>
-                                <mat-icon>delete</mat-icon>
-                                <span>Delete</span>
-                            </button>
-                        </mat-menu>
+                        <button (click)="completeHabit(habit.id, completionType.Partially)" mat-menu-item>
+                            <mat-icon svgIcon="partially"></mat-icon>
+                            <span>Complete as partially</span>
+                        </button>
+                        <button (click)="completeHabit(habit.id, completionType.Lazy)" mat-menu-item>
+                            <mat-icon svgIcon="lazy"></mat-icon>
+                            <span>Complete as lazy</span>
+                        </button>
+                        <button (click)="completeHabit(habit.id, completionType.Alternative)" mat-menu-item>
+                            <mat-icon svgIcon="alternative"></mat-icon>
+                            <span>Complete as alternative</span>
+                        </button>
+                        <button (click)="completeHabit(habit.id, completionType.Failed)" mat-menu-item>
+                            <mat-icon svgIcon="failed"></mat-icon>
+                            <span>Complete as failed</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button (click)="openTaskDialog(habit.id)" mat-menu-item>
+                            <mat-icon>edit</mat-icon>
+                            <span>Edit</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button (click)="deleteTask(habit.id)" mat-menu-item>
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                        </button>
+                    </mat-menu>
 
-                    </mat-list-item>
-                </mat-list>
-            </mat-card-content>
-        </mat-card>
-    </div>
+                </mat-list-item>
+            </mat-list>
+        </mat-card-content>
+    </mat-card>
 </div>
-
-<ng-template #loading>Loading...</ng-template>

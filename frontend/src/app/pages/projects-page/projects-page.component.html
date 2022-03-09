@@ -1,0 +1,79 @@
+<app-nav-title>Projects</app-nav-title>
+
+<div class="container">
+    <div *ngIf="projectsResponse; else loading">
+        <div fxLayout="row" fxLayout.sm="column" fxLayoutGap="1px">
+            <h3 fxFlex="2 1 auto" fxLayoutAlign="start">
+                Projects ({{ projectsResponse.projects.length }})
+            </h3>
+            <div fxLayoutAlign="center center">
+                <button mat-icon-button routerLink="/create-project">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <table [dataSource]="projectsResponse.projects" class="mat-elevation-z0" mat-table style="width: 100%;">
+            <ng-container matColumnDef="color">
+                <th *matHeaderCellDef mat-header-cell style="padding-left: 0; text-align: center;">Color</th>
+                <td *matCellDef="let project" mat-cell style="width: 1%; padding-left: 0; text-align: center;">
+                    <div mat-line>
+                        <button (click)="$event.stopPropagation();" [matMenuTriggerFor]="colorMenu" mat-icon-button>
+                            <mat-icon [style]="'color: ' + project.color">radio_button_checked</mat-icon>
+                        </button>
+
+                        <mat-menu #colorMenu="matMenu">
+                            <button (click)="changeColor(project.id, color)" *ngFor="let color of colors;"
+                                    mat-icon-button>
+                                <mat-icon [style]="'color: ' + color">brightness_1</mat-icon>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="title">
+                <th *matHeaderCellDef mat-header-cell>Title</th>
+                <td *matCellDef="let project" mat-cell>
+                    <a [routerLink]="'/project/' + project.id" href="#">{{project.title}}</a>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+                <th *matHeaderCellDef mat-header-cell>Description</th>
+                <td *matCellDef="let element" mat-cell> {{element.description}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="action">
+                <th *matHeaderCellDef mat-header-cell></th>
+                <td *matCellDef="let project" mat-cell style="width: 1%;">
+                    <button (click)="$event.stopPropagation();" [matMenuTriggerFor]="projectMenu" mat-icon-button>
+                        <mat-icon>more_vert</mat-icon>
+                    </button>
+
+                    <mat-menu #projectMenu="matMenu">
+                        <button [routerLink]="'/project/' + project.id + '/edit'" mat-menu-item>
+                            <mat-icon>edit</mat-icon>
+                            <span>Edit</span>
+                        </button>
+                        <button [routerLink]="'/project/' + project.id + '/invite'" mat-menu-item>
+                            <mat-icon>person_add_alt</mat-icon>
+                            <span>Invite</span>
+                        </button>
+                        <mat-divider></mat-divider>
+                        <button (click)="deleteProject(project.id)" mat-menu-item>
+                            <mat-icon>delete</mat-icon>
+                            <span>Delete</span>
+                        </button>
+                    </mat-menu>
+                </td>
+            </ng-container>
+
+            <tr *matHeaderRowDef="displayedColumns" mat-header-row></tr>
+            <tr *matRowDef="let row; columns: displayedColumns;" mat-row></tr>
+        </table>
+    </div>
+</div>
+
+<ng-template #loading>Loading...</ng-template>
+

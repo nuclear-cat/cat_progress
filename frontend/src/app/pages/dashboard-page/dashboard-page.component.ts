@@ -1,53 +1,57 @@
-import {Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit, Output, ViewChild} from '@angular/core';
 import {Subscription} from "rxjs";
 import {MatDialog} from '@angular/material/dialog';
 import {FormBuilder, FormGroup} from "@angular/forms";
 import {ApiService} from "../../api/api.service";
 import {OverviewResponse} from "../../api/response/overview-response";
-import {TaskDialogComponent} from "../../task-dialog/task-dialog.component";
+import {TaskDialogComponent} from "../../dialogs/task-dialog/task-dialog.component";
 import * as moment from "moment";
 import {ActivatedRoute} from "@angular/router";
 import {HabitCompletionType} from "../../enums/habit-completion-type";
+import {CdkPortal} from "@angular/cdk/portal";
+import {CdkDragDrop, moveItemInArray} from "@angular/cdk/drag-drop";
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './dashboard-page.component.html',
-  styleUrls: ['./dashboard-page.component.scss'],
+    selector: 'app-dashboard',
+    templateUrl: './dashboard-page.component.html',
+    styleUrls: ['./dashboard-page.component.scss'],
 })
 export class DashboardPageComponent implements OnInit, OnDestroy {
+    public overview!: OverviewResponse;
+    public overviewSubscription!: Subscription;
+    public taskCreatingMode = false;
+    public addTaskForm!: FormGroup;
+    public isHabitsLoading: boolean = false;
+    public habitsDate: moment.Moment = moment().startOf('day');
+    public habitsCompleteLoading: string[] = [];
+    public completionType = HabitCompletionType;
+    @Output() public pageReady = new EventEmitter();
+    public selectedProjectId: string | null = null;
 
-  public overview!: OverviewResponse;
-  public overviewSubscription!: Subscription;
-  public taskCreatingMode = false;
-  public addTaskForm!: FormGroup;
-  public isHabitsLoading: boolean = false;
-  public habitsDate: moment.Moment = moment().startOf('day');
-  public habitsCompleteLoading: string[] = [];
-  public title = 'Dashboard';
-  public completionType = HabitCompletionType;
-  @Output() public pageReady = new EventEmitter();
+    @ViewChild(CdkPortal)
+    public portalContent!: CdkPortal;
+    public editTasks: string[] = [];
 
-  constructor(
-      private apiService: ApiService,
-      public dialog: MatDialog,
-      private formBuilder: FormBuilder,
-      public route: ActivatedRoute,
-  ) {
-  }
+    constructor(
+        private apiService: ApiService,
+        public dialog: MatDialog,
+        private formBuilder: FormBuilder,
+        public route: ActivatedRoute,
+    ) {
+    }
 
-  public ngOnInit(): void {
-    this.route.paramMap.subscribe();
+    public ngOnInit(): void {
+        this.route.paramMap.subscribe();
 
-    this.route.data.subscribe(data => {
-      this.overview = data['overview'];
-    });
+        this.route.data.subscribe(data => {
+            this.overview = data['overview'];
+        });
 
-    this.loadOverview();
-    this.pageReady.emit(true);
-    this.addTaskForm = this.formBuilder.group({
-      title: [null,],
-    });
-  }
+        this.pageReady.emit(true);
+        this.addTaskForm = this.formBuilder.group({
+            title: [null,],
+        });
+    }
 
   public ngOnDestroy(): void {
     if (this.overviewSubscription) {
@@ -68,7 +72,6 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     this.overview.completedTasks.unshift(completedTask);
   }
 
-
   public deleteTask(id: string): void {
     this.apiService.deleteTask(id).subscribe({
       complete: () => {
@@ -85,8 +88,9 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
     }
 
     this.apiService.createTask({
-      title: this.addTaskForm.get('title')?.value,
-      description: null,
+        title: this.addTaskForm.get('title')?.value,
+        description: null,
+        projectId: this.selectedProjectId,
     }).subscribe({
       complete: () => {
         this.addTaskForm.reset();
@@ -118,56 +122,80 @@ export class DashboardPageComponent implements OnInit, OnDestroy {
   }
 
   public incompleteTask(id: string): void {
-    this.apiService.incompleteTask(id).subscribe();
+      this.apiService.incompleteTask(id).subscribe();
 
-    const uncompletedTask: any | undefined = this.overview.completedTasks.find(task => task.id === id);
+      const uncompletedTask: any | undefined = this.overview.completedTasks.find(task => task.id === id);
 
-    if (uncompletedTask === undefined) {
-      throw new Error();
+      if (uncompletedTask === undefined) {
+          throw new Error();
+      }
+
+      this.overview.completedTasks = this.overview.completedTasks.filter(task => task !== uncompletedTask);
+      this.overview.activeTasks.unshift(uncompletedTask);
+  }
+
+    public selectProject(id: string | null): void {
+        this.selectedProjectId = id;
+        this.loadOverview();
     }
 
-    this.overview.completedTasks = this.overview.completedTasks.filter(task => task !== uncompletedTask);
-    this.overview.activeTasks.unshift(uncompletedTask);
-  }
+    public openTaskDialog(taskId: string) {
 
-  private loadOverview(): void {
-    this.overviewSubscription = this.apiService.getOverview(this.habitsDate)
-        .subscribe(
-            overview => {
-              this.overview = overview;
-              this.isHabitsLoading = false;
+        console.log(taskId);
+
+        const task = this.overview.activeTasks.filter(item => item.id == taskId)[0];
+
+        const dialogRef = this.dialog.open(TaskDialogComponent, {
+            width: '100vw',
+            data: {
+                task: task,
             },
-        );
-  }
+        });
 
-  public openTaskDialog(task: any) {
-    const dialogRef = this.dialog.open(TaskDialogComponent, {
-      width: '100vw',
-      data: {
-        task: task,
-      },
-    });
+        dialogRef.afterClosed().subscribe(result => {
+            if (result.success) {
+                this.loadOverview();
+            }
+        });
+    }
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result.success) {
+    public toggleTaskCreatingMode() {
+        this.taskCreatingMode = !this.taskCreatingMode;
+    }
+
+    public incrementHabitsDay(): void {
+        this.isHabitsLoading = true;
+        this.habitsDate = this.habitsDate.add(1, 'day');
         this.loadOverview();
-      }
-    });
-  }
+    }
 
-  public toggleTaskCreatingMode() {
-    this.taskCreatingMode = !this.taskCreatingMode;
-  }
+    public decrementHabitsDay(): void {
+        this.isHabitsLoading = true;
+        this.habitsDate = this.habitsDate.subtract(1, 'day');
+        this.loadOverview();
+    }
 
-  public incrementHabitsDay(): void {
-    this.isHabitsLoading = true;
-    this.habitsDate = this.habitsDate.add(1, 'day');
-    this.loadOverview();
-  }
+    private loadOverview(): void {
+        this.overviewSubscription = this.apiService.getOverview(this.habitsDate, this.selectedProjectId)
+            .subscribe(
+                overview => {
+                    this.overview = overview;
+                    this.isHabitsLoading = false;
+                },
+            );
+    }
 
-  public decrementHabitsDay(): void {
-    this.isHabitsLoading = true;
-    this.habitsDate = this.habitsDate.subtract(1, 'day');
-    this.loadOverview();
-  }
+    public editTaskStart(id: string) {
+        this.editTasks.push(id);
+    }
+
+    public editTaskClose(id: string): void {
+        this.editTasks = this.editTasks.filter(function (value: string) {
+            return value !== id
+        });
+    }
+
+    public resortActiveTasks($event: CdkDragDrop<any[]>): void {
+        moveItemInArray(this.overview.activeTasks, $event.previousIndex, $event.currentIndex);
+    }
 }

@@ -3,6 +3,7 @@
 namespace App\Model\Progress\Entity;
 
 use App\Model\Progress\Repository\CategoryRepository;
+use App\Model\Progress\ValueObject\Color;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -30,8 +31,8 @@ class Category
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: Habit::class)]
     private Collection $habits;
 
-    #[ORM\Column(name: 'color', type: 'progress_category_color', length: 25)]
-    private CategoryColor $color = CategoryColor::Blue;
+    #[ORM\Column(name: 'color', type: 'progress_color', length: 25)]
+    private Color $color = Color::Blue;
 
     #[Pure] public function __construct(
         Ulid $id,
@@ -76,12 +77,12 @@ class Category
         return $this->habits->toArray();
     }
 
-    public function getColor(): CategoryColor
+    public function getColor(): Color
     {
         return $this->color;
     }
 
-    public function setColor(CategoryColor $color): self
+    public function setColor(Color $color): self
     {
         $this->color = $color;
 

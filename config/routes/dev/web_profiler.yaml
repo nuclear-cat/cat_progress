@@ -4,4 +4,5 @@ web_profiler_wdt:
 
 web_profiler_profiler:
     resource: '@WebProfilerBundle/Resources/config/routing/profiler.xml'
-    prefix: /_fprofiler
+    prefix: /_profiler
+

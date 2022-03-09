@@ -3,6 +3,7 @@
 namespace App\Model\Progress\Repository;
 
 use App\Exception\NotFoundException;
+use App\Model\Progress\Entity\Project\Project;
 use App\Model\Progress\Entity\Task;
 use App\Model\Progress\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -57,15 +58,28 @@ class TaskRepository extends ServiceEntityRepository
     /**
      * @return Task[]
      */
-    public function findActiveUserTasks(User $user): array
+    public function findActiveUserTasks(User $user, ?Project $project = null): array
     {
-        return $this->createQueryBuilder('t')
+        $qb = $this->createQueryBuilder('t')
+            ->addSelect('p')
             ->andWhere('t.completedAt IS NULL')
             ->orderBy('t.id', 'DESC')
             ->join('t.user', 'u')
-            ->andWhere('u.id = :userId')
+            ->leftJoin('t.project', 'p')
+            ->leftJoin('p.memberships', 'm')
+            ->leftJoin('m.member', 'me')
+            ->andWhere('(u.id = :userId OR me.id = :memberId OR p.creator = :projectCreatorId)')
             ->setParameter('userId', $user->getId()->toRfc4122())
-            ->getQuery()
+            ->setParameter('memberId', $user->getId()->toRfc4122())
+            ->setParameter('projectCreatorId', $user->getId()->toRfc4122());
+
+        if ($project) {
+            $qb
+                ->andWhere('p.id = :projectId')
+                ->setParameter('projectId', $project->getId()->toRfc4122());
+        }
+
+        return $qb->getQuery()
             ->getResult();
     }
 
@@ -83,5 +97,4 @@ class TaskRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
-
 }

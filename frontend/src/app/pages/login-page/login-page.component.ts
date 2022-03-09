@@ -55,6 +55,15 @@ export class LoginPageComponent implements OnInit, OnDestroy {
         this.loginForm.enable();
       },
       next: () => {
+        const target = localStorage.getItem('target');
+        localStorage.removeItem('target');
+
+        if (target) {
+          window.location.href = target;
+
+          return;
+        }
+
         return this.router.navigate(['/']);
       },
     });

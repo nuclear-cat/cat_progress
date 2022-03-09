@@ -26,7 +26,11 @@ export class TokenInterceptor implements HttpInterceptor {
                 this.router.navigate(['/login']);
 
                 return throwError(() => error)
-            } else if (error instanceof HttpErrorResponse && error.status === 401) {
+            } else if (
+                error instanceof HttpErrorResponse
+                && error.status === 401
+                && !error.url?.match(/\/api\/v1\/login?/gm)
+            ) {
                 return this.handle401Error(request, next);
             } else {
                 return throwError(error);
@@ -60,8 +64,6 @@ export class TokenInterceptor implements HttpInterceptor {
                 filter(token => token != null),
                 take(1),
                 switchMap(jwt => {
-
-
                     return next.handle(TokenInterceptor.addToken(request, jwt));
                 }),
             );

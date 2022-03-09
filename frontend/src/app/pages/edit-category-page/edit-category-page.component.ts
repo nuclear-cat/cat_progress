@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../api/api.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
-import {CategoryColorsResponse} from "../../api/response/category-colors-response";
+import {ColorsResponse} from "../../api/response/colors-response";
 import {ActivatedRoute, Router} from "@angular/router";
 import {CategoryResponse} from "../../api/response/category-response";
 
@@ -32,27 +32,27 @@ export class EditCategoryPageComponent implements OnInit {
     this.apiService.getCategory(categoryId).subscribe({
       next: (next: CategoryResponse) => {
 
-        this.form = this.formBuilder.group({
-          title: [next.category.title, [Validators.required,]],
-          description: [next.category.description, []],
-          color: [next.category.color, []],
-        });
+          this.form = this.formBuilder.group({
+              title: [next.category.title, [Validators.required,]],
+              description: [next.category.description, []],
+              color: [next.category.color, []],
+          });
 
-        this.selectedColor = next.category.color;
+          this.selectedColor = next.category.color;
       },
     });
 
-    this.apiService.getCategoryColors().subscribe({
-      next: (next: CategoryColorsResponse) => {
-        this.colors = next.colors;
-      }
-    });
+      this.apiService.getColors().subscribe({
+          next: (next: ColorsResponse) => {
+              this.colors = next.colors;
+          }
+      });
 
-    this.form = this.formBuilder.group({
-      title: [null, [Validators.required,]],
-      description: [null, []],
-      color: [null, []],
-    });
+      this.form = this.formBuilder.group({
+          title: [null, [Validators.required,]],
+          description: [null, []],
+          color: [null, []],
+      });
   }
 
   public selectColor(color: string): void {

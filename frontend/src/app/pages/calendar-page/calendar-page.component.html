@@ -1,3 +1,5 @@
+<app-nav-title>Calendar</app-nav-title>
+
 <div class="container">
 
     <h3>{{ selectedMonth.format('MMMM, YYYY') }}</h3>
@@ -45,12 +47,12 @@
                                 (click)="completeHabit(habit.id, day.date)"
                                 mat-icon-button
                         >
+
+
                             <mat-icon>radio_button_unchecked</mat-icon>
                         </button>
 
                         <small>
-
-
                             <button
                                     [disabled]="isLoading(habit.id, day.date)"
                                     class="small"
@@ -59,7 +61,23 @@
                                     (click)="incompleteHabit(habit.id, completion.id, day.date)"
                                     mat-icon-button
                             >
-                                <mat-icon>check_circle_outline</mat-icon>
+
+
+                                <mat-icon *ngIf="completion.type === completionType.Success"
+                                          class="mat-24 hover-icon-switch_on-non-hover">check_circle_outline
+                                </mat-icon>
+                                <mat-icon *ngIf="completion.type === completionType.Failed"
+                                          class="mat-24 hover-icon-switch_on-non-hover"
+                                          svgIcon="failed"></mat-icon>
+                                <mat-icon *ngIf="completion.type === completionType.Lazy"
+                                          class="mat-24 hover-icon-switch_on-non-hover"
+                                          svgIcon="lazy"></mat-icon>
+                                <mat-icon *ngIf="completion.type === completionType.Partially"
+                                          class="mat-24 hover-icon-switch_on-non-hover"
+                                          svgIcon="partially"></mat-icon>
+                                <mat-icon *ngIf="completion.type === completionType.Alternative"
+                                          class="mat-24 hover-icon-switch_on-non-hover"
+                                          svgIcon="alternative"></mat-icon>
                             </button>
                             {{ habit.title }}
                         </small>

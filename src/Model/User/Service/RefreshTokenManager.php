@@ -51,7 +51,7 @@ class RefreshTokenManager
         $now = new \DateTimeImmutable();
         $expiresAt = $now->modify('+6 months');
 
-        $user = $this->userRepository->get($userId);
+        $user = $this->userRepository->get(Ulid::fromString($userId));
 
         $sessions = $this->refreshSessionRepository->findByUserIdAndDeviceInfo($deviceInfo, $userId);
 
